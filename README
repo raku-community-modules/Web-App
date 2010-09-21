@@ -1,0 +1,60 @@
+WebRequest
+-----------
+
+WebRequest is the spiritual successor to CGI.pm on Perl 5.
+It supports standard CGI, SCGI (recommended) and mod-perl6.
+Currently only supports GET and non-multipart POST.
+
+I am planning on adding multi-part POST including file uploads,
+and some optional magic parameters similar to the ones in PHP.
+
+Status: Stable, but with planned new features as above.
+
+Requirements:
+
+ - Rakudo Perl 6
+   http://rakudo.org/
+
+ - Hash::Has
+   http://github.com/supernovus/hash-has
+
+Optional (but recommended):
+
+  - SCGI
+    http://github.com/supernovus/SCGI
+
+Note:
+
+  I would not recommend using standard CGI with Perl 6. It's horridly slow,
+  and the current version of Rakudo has some bugs when using %*ENV like a Hash.
+  The SCGI library is highly recommended, and is what WebRequest has been
+  tested with.
+
+Example:
+
+  use SCGI;
+  use WebRequest;
+
+  my $scgi = SCGI.new( :port(8118) );
+
+  my $handler = sub (%env) {
+    my $request = WebRequest.new(:%env);
+    my $return = "Content-type: text/plain\n\n";
+    $return ~= "Request parameters:\n";
+    $return ~= $request.params.fmt('%s: %s', "\n");
+    my $name = $request.get('name');
+    if $name {
+      $return ~= "Hello $name";
+    }
+    return $return;
+  }
+
+  $scgi.handle: $handler;
+
+  ## End of script.
+
+See the ww6 project for a more comprehensive example of the combination of
+SCGI and WebRequest. http://github.com/supernovus/ww6
+
+Author: Timothy Totten
+License: Artistic License 2.0
