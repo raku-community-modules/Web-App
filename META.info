@@ -1,0 +1,8 @@
+{
+  "name"        : "WebRequest",
+  "version"     : "*",
+  "description" : "An object representing an HTTP Request.",
+  "depends"     : [ "Hash::Has", "SCGI" ],
+  "repo-type"   : "git",
+  "repo-url"    : "git://github.com/supernovus/WebRequest.git"
+}
