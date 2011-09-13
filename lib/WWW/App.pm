@@ -2,18 +2,10 @@ class WWW::App;
 
 use WWW::Request;
 use WWW::Response;
-use SCGI; ## This should eventually be a require call.
 
-has $.engine; ## The engine to handle requests. Must support handle().
+has $.engine; ## The engine to handle requests.
 
-method new (:$SCGI, :$CGI, :$FastCGI, :$mod_perl6, :$debug) {
-  my $engine;
-  my $strict = True;
-  if ($debug) { $strict = False; }
-  if ($SCGI) {
-    $engine = SCGI.new(:port($SCGI), :PSGI, :$strict, :$debug);
-  }
-  else { die "Sorry, that engine is not yet supported."; }
+method new ($engine) {
   return self.bless(*, :$engine);
 }
 
@@ -25,5 +17,15 @@ method run (&app) {
     if (!$res.status) { $res.set-status(200); }
     return $res.response;
   }
-  $!engine.handle: $handler;
+  if $!engine.can('handle') {
+    $!engine.handle: $handler;
+  }
+  elsif $!engine.can('app') && $!engine.can('run') {
+    $!engine.app($handler);
+    $!engine.run;
+  }
+  else {
+    die "Sorry, unknown engine type.";
+  }
 }
+

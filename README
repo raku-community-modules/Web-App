@@ -33,13 +33,17 @@ and makes building web apps really easy.
 
 Currently it supports the following backend engines:
 
-  SCGI    Use the SCGI library. Pass the port as the option.
+  SCGI
+  HTTP::Server::Simple::PSGI
 
-Eventually it will also support:
+I am also planning to implement libraries using a compatible API
+for standard CGI, FastCGI and possibly mod_perl6.
 
-  CGI         This is a standard CGI script, ewww, yucky, don't do that!
-  FastCGI     Use the FastCGI library. I haven't written it yet.
-  mod_perl6   Use mod_perl6. Outdated at the moment.
+The engine object must either have a handle() method that takes
+an subroutine as its parameter (the subroutine must accept a hash that
+will contain the environment) or an app() method that takes
+the aforementioned subroutine as a parameter, and a run() method that
+then runs the handling.
 
 = Status =
 
@@ -50,20 +54,29 @@ Stable, but with planned new features as above.
  - Rakudo Perl 6
    http://rakudo.org/
 
+= Optional Modules =
+
   - SCGI
     http://github.com/supernovus/SCGI
 
+  - HTTP::Server::Simple::PSGI
+    http://github.com/mberends/http-server-simple
+
+
 Note: You can use WWW::Request and WWW::Response with whatever backend
       you want, including regular CGI, but I don't recommend using CGI.
-      It's horridly slow, and very evil. I recommend using SCGI.
+      It's horridly slow, and very evil. I recommend using one of the above
+      libraries instead.
 
 = Example 1 =
 
 This is an example of the use of WWW::App and it's wrapper magic.
 
+  use SCGI;
   use WWW::App;
 
-  my $app = WWW::App.new(:SCGI(8118));
+  my $scgi = SCGI.new(:port(8118), :PSGI); ## Make sure to set PSGI mode!
+  my $app = WWW::App.new($scgi);
 
   my $handler = sub ($req, $res) {
     $res.set-status(200); 
