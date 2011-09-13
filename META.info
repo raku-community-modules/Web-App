@@ -1,7 +1,7 @@
 {
-  "name"        : "WebRequest",
+  "name"        : "WWW::App",
   "version"     : "*",
-  "description" : "An object representing an HTTP Request.",
-  "depends"     : [ "Hash::Has", "SCGI" ],
-  "source-url"    : "git://github.com/supernovus/WebRequest.git"
+  "description" : "Three libraries for building web apps in Perl 6",
+  "depends"     : [ "SCGI" ],
+  "source-url"    : "git://github.com/supernovus/perl6-www-app.git"
 }
