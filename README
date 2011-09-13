@@ -1,60 +1,121 @@
-WebRequest
------------
+WWW::App
+--------------
 
-WebRequest is the spiritual successor to CGI.pm on Perl 5.
+WWW::App is a simple web application library for Perl 6, that uses
+the PSGI interface.
+
+It consists of three libraries:
+
+  WWW::Request contains information about the HTTP request.
+  WWW::Response builds a PSGI compliant response.
+  WWW::App wraps those two, and uses backend engines to handle the rest.
+
+The first two libraries can be used by themselves if the full functionality
+of WWW::App is not required.
+
+= WWW::Request =
+
+WWW::Request is similar to CGI.pm or Plack::Request from Perl 5.
+
 It supports standard CGI, SCGI (recommended) and mod-perl6.
 Currently only supports GET and non-multipart POST.
-
 I am planning on adding multi-part POST including file uploads,
 and some optional magic parameters similar to the ones in PHP.
 
-Status: Stable, but with planned new features as above.
+= WWW::Response =
 
-Requirements:
+An easy to use object that builds a PSGI compliant response.
+
+= WWW::App =
+
+Puts the above two together, along with a backend engine such as SCGI,
+and makes building web apps really easy.
+
+Currently it supports the following backend engines:
+
+  SCGI    Use the SCGI library. Pass the port as the option.
+
+Eventually it will also support:
+
+  CGI         This is a standard CGI script, ewww, yucky, don't do that!
+  FastCGI     Use the FastCGI library. I haven't written it yet.
+  mod_perl6   Use mod_perl6. Outdated at the moment.
+
+= Status =
+
+Stable, but with planned new features as above.
+
+= Requirements =
 
  - Rakudo Perl 6
    http://rakudo.org/
 
- - Hash::Has
-   http://github.com/supernovus/hash-has
-
-Optional (but recommended):
-
   - SCGI
     http://github.com/supernovus/SCGI
 
-Note:
+Note: You can use WWW::Request and WWW::Response with whatever backend
+      you want, including regular CGI, but I don't recommend using CGI.
+      It's horridly slow, and very evil. I recommend using SCGI.
 
-  I would not recommend using standard CGI with Perl 6. It's horridly slow,
-  and the current version of Rakudo has some bugs when using %*ENV like a Hash.
-  The SCGI library is highly recommended, and is what WebRequest has been
-  tested with.
+= Example 1 =
 
-Example:
+This is an example of the use of WWW::App and it's wrapper magic.
+
+  use WWW::App;
+
+  my $app = WWW::App.new(:SCGI(8118));
+
+  my $handler = sub ($req, $res) {
+    $res.set-status(200); 
+    $res.content-type('text/plain'); ## a wrapper to add-header().
+    $res.say("Request parameters:");
+    $res.print($req.params.fmt('%s: %s', "\n"));
+    my $name = $req.get('name');
+    if $name {
+      $res.say("Hello $name");
+    }
+  }
+
+  $app.run: $handler;
+
+  ## End of script
+
+= Example 2 =
+
+This is an example of using WWW::Request and WWW::Response together with
+SCGI, without using WWW::App as a wrapper.
 
   use SCGI;
-  use WebRequest;
+  use WWW::Request;
+  use WWW::Response;
 
-  my $scgi = SCGI.new( :port(8118) );
+  my $scgi = SCGI.new( :port(8118), :PSGI );
 
   my $handler = sub (%env) {
-    my $request = WebRequest.new(:%env);
-    my $return = "Content-type: text/plain\n\n";
-    $return ~= "Request parameters:\n";
-    $return ~= $request.params.fmt('%s: %s', "\n");
-    my $name = $request.get('name');
+    my $req = WWW::Request.new(%env);
+    my $res = WWW::Response.new();
+    $res.set-status(200);
+    $res.add-header('Content-Type' => 'text/plain');
+    $res.say("Request parameters:");
+    $res.print($req.params.fmt('%s: %s', "\n"));
+    my $name = $req.get('name');
     if $name {
-      $return ~= "Hello $name";
+      $res.say("Hello $name");
     }
-    return $return;
+    return $res.response;
   }
 
   $scgi.handle: $handler;
 
   ## End of script.
 
-See the ww6 project for a more comprehensive example of the combination of
-SCGI and WebRequest. http://github.com/supernovus/ww6
+= Author =
 
-Author: Timothy Totten
-License: Artistic License 2.0
+Timothy Totten
+http://huri.net/
+http://github.com/supernovus/
+
+= License =
+
+Artistic License 2.0
+
