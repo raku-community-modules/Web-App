@@ -2,3 +2,5 @@
   Sending files should be made easy.
 * Add multipart decoding to WWW::Request
   Including file uploads.
+* Add more dispatch rules to WWW::App.
+

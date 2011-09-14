@@ -45,6 +45,10 @@ will contain the environment) or an app() method that takes
 the aforementioned subroutine as a parameter, and a run() method that
 then runs the handling.
 
+A new feature of WWW::App is dispatching based on rules. You can now
+dispatch to separate handlers based on rules. The only supported rule at
+the moment is 'path' which dispatches based on the PATH_INFO.
+
 = Status =
 
 Stable, but with planned new features as above.
@@ -121,6 +125,11 @@ SCGI, without using WWW::App as a wrapper.
   $scgi.handle: $handler;
 
   ## End of script.
+
+= Further Examples =
+
+For more examples, including using HTTP::Server::Simple::PSGI, and
+using dispatch rules, see the examples in the 'test' folder.
 
 = Author =
 
