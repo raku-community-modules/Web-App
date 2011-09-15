@@ -2,7 +2,10 @@ WWW::App
 --------------
 
 WWW::App is a simple web application library for Perl 6, that uses
-the PSGI interface.
+the PSGI interface. It replaces my older WebRequest library, and is
+meant as a more generic framework to replace my ww6 framework (which
+is officially retired.) Like ww6, it is very flexible, unlike it, it
+doesn't try to be everything under the sun.
 
 It consists of three libraries:
 
@@ -25,10 +28,12 @@ and some optional magic parameters similar to the ones in PHP.
 = WWW::Response =
 
 An easy to use object that builds a PSGI compliant response.
+Supports some quick methods such as content-type() and
+redirect() to automatically create appropriate headers.
 
 = WWW::App =
 
-Puts the above two together, along with a backend engine such as SCGI,
+Puts the above two together, along with a backend engine, 
 and makes building web apps really easy.
 
 Currently it supports the following backend engines:
@@ -45,13 +50,17 @@ will contain the environment) or an app() method that takes
 the aforementioned subroutine as a parameter, and a run() method that
 then runs the handling.
 
-A new feature of WWW::App is dispatching based on rules. You can now
-dispatch to separate handlers based on rules. The only supported rule at
-the moment is 'path' which dispatches based on the PATH_INFO.
+A new feature of WWW::App is dispatching based on rules.
+Rather than supporting a single handler, you can have multiple
+rules, which will perform specific actions, including running
+handlers, based on rules such as the URL path, host, or protocol.
+Actions can include redirection, setting content-type, adding headers,
+or calling a handler (either a code block, or an object with a 
+handle() method.) A default handler can be called if no rules are matched.
 
 = Status =
 
-Stable, but with planned new features as above.
+Stable, but with several planned features, see TODO for more details.
 
 = Requirements =
 
@@ -70,7 +79,8 @@ Stable, but with planned new features as above.
 Note: You can use WWW::Request and WWW::Response with whatever backend
       you want, including regular CGI, but I don't recommend using CGI.
       It's horridly slow, and very evil. I recommend using one of the above
-      libraries instead.
+      libraries instead. Also, WWW::App is a nice wrapper, and requires at
+      least one of the above optional modules to be used.
 
 = Example 1 =
 
@@ -83,10 +93,9 @@ This is an example of the use of WWW::App and it's wrapper magic.
   my $app = WWW::App.new($scgi);
 
   my $handler = sub ($req, $res) {
-    $res.set-status(200); 
-    $res.content-type('text/plain'); ## a wrapper to add-header().
+    $res.content-type('text/plain');
     $res.say("Request parameters:");
-    $res.print($req.params.fmt('%s: %s', "\n"));
+    $res.say($req.params.fmt('%s: %s', "\n"));
     my $name = $req.get('name');
     if $name {
       $res.say("Hello $name");
@@ -114,7 +123,7 @@ SCGI, without using WWW::App as a wrapper.
     $res.set-status(200);
     $res.add-header('Content-Type' => 'text/plain');
     $res.say("Request parameters:");
-    $res.print($req.params.fmt('%s: %s', "\n"));
+    $res.say($req.params.fmt('%s: %s', "\n"));
     my $name = $req.get('name');
     if $name {
       $res.say("Hello $name");

@@ -6,12 +6,14 @@ class WWW::Request;
 has $.body;
 has $.type;
 has $.method;
+has $.host;
 has $.remote-address;
 has $.remote-host;
 has $.script-name;
 has $.path;
 has $.uri;
 has $.port;
+has $.proto;
 has $.query-string;
 has $.content-length;
 has $.user-agent;
@@ -27,12 +29,14 @@ method new(%env) {
   ## Now, let's add some common stuff.
   %new<type> = %env<CONTENT_TYPE> // '';
   %new<method> = %env<REQUEST_METHOD> // 'GET';
+  %new<host> = %env<HTTP_HOST> // %env<HOSTNAME> // 'localhost';
   %new<remote-address> = %env<REMOTE_ADDRESS> // '';
   %new<user-agent> = %env<HTTP_USER_AGENT> // 'unknown';
-  %new<path> = %env<PATH_INFO> // '/';
-  %new<script-name> = %env<SCRIPT_NAME> // '';
   %new<uri> = %env<REQUEST_URI> // '';
+  %new<path> = %env<PATH_INFO> // %new<uri>;
+  %new<script-name> = %env<SCRIPT_NAME> // '';
   %new<port> = +%env<SERVER_PORT> // 80;
+  %new<proto> = %env<HTTPS> ?? 'https' !! 'http';
   %new<content-length> = +%env<CONTENT_LENGTH> // 0;
   %new<remote-host> = %env<REMOTE_HOST> // %new<remote-address>;
   ## Now, if we're POST, let's get the body.
@@ -44,7 +48,20 @@ method new(%env) {
       %new<body> = $body;
     }
     elsif %env<SCGI.Body> {
-      %new<body> = %env<SCGI.Body>;
+      %new<body> = %env<SCGI.Body>; ## The SCGI library always returns a Str.
+    }
+    elsif %env<psgi.input> {
+      ## There is no standard for this, it can be a Str(ing), Array or IO object.
+      my $input = %env<psgi.input>;
+      if $input ~~ Str {
+        %new<body> = $input;
+      }
+      elsif $input ~~ Array {
+        %new<body> = $input.join("\x0D\x0A"); ## Join with CRLF.
+      }
+      elsif $input ~~ IO {
+        %new<body> = $input.slurp;
+      }
     }
     else {
       ## Standard CGI, suck in STDIN.

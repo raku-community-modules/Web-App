@@ -1,6 +1,7 @@
 * Add more pre-canned headers and automation to WWW::Response
-  Sending files should be made easy.
+  - Sending files should be made easy.
 * Add multipart decoding to WWW::Request
-  Including file uploads.
-* Add more dispatch rules to WWW::App.
+  - File uploads must be handled.
+* Create Lighter as an external project, using WWW::App.
+  - Replaces the Lighter implementation in ww6.
 

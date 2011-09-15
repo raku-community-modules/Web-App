@@ -9,8 +9,23 @@ method set-status (Int $status) {
   $.status = $status;
 }
 
-method content-type (Str $type) {
-  self.add-header('Content-Type' => $type);
+method content-type (Str $type?) {
+  if ($type) {
+    self.add-header('Content-Type' => $type);
+  }
+  else {
+    for @.headers -> $header {
+      if ($header.key.lc eq 'content-type') {
+        return $header.value;
+      }
+    }
+    return;
+  }
+}
+
+method redirect (Str $url, $status=302) {
+  self.set-status($status);
+  self.add-header('Location' => $url);
 }
 
 method add-header (Pair $header) {
@@ -22,7 +37,7 @@ method insert-header (Pair $header) {
 }
 
 method say (Str $text) {
-  @.body.push: $text~"\n";
+  @.body.push: $text~"\x0D\x0A"; ## Use CRLF.
 }
 
 method print (Str $text) {
