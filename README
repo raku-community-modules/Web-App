@@ -20,7 +20,7 @@ of WWW::App is not required.
 
 WWW::Request is similar to CGI.pm or Plack::Request from Perl 5.
 
-It supports standard CGI, SCGI (recommended) and mod-perl6.
+It supports standard CGI, SCGI, PSGI and mod-perl6.
 Currently only supports GET and non-multipart POST.
 I am planning on adding multi-part POST including file uploads,
 and some optional magic parameters similar to the ones in PHP.
@@ -39,7 +39,8 @@ and makes building web apps really easy.
 Currently it supports the following backend engines:
 
   SCGI
-  HTTP::Server::Simple::PSGI
+  HTTP::Easy::PSGI               (including POST data.)
+  HTTP::Server::Simple::PSGI     (no POST data support.)
 
 I am also planning to implement libraries using a compatible API
 for standard CGI, FastCGI and possibly mod_perl6.
@@ -72,7 +73,10 @@ Stable, but with several planned features, see TODO for more details.
   - SCGI
     http://github.com/supernovus/SCGI
 
-  - HTTP::Server::Simple::PSGI
+  - HTTP::Easy
+    http://github.com/supernovus/perl6-http-easy
+
+  - HTTP::Server::Simple
     http://github.com/mberends/http-server-simple
 
 
@@ -137,7 +141,7 @@ SCGI, without using WWW::App as a wrapper.
 
 = Further Examples =
 
-For more examples, including using HTTP::Server::Simple::PSGI, and
+For more examples, including using other backends, and
 using dispatch rules, see the examples in the 'test' folder.
 
 = Author =
