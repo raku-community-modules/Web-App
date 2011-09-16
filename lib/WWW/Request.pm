@@ -29,7 +29,7 @@ method new(%env) {
   ## Now, let's add some common stuff.
   %new<type> = %env<CONTENT_TYPE> // '';
   %new<method> = %env<REQUEST_METHOD> // 'GET';
-  %new<host> = %env<HTTP_HOST> // %env<HOSTNAME> // 'localhost';
+  %new<host> = %env<HTTP_HOST> // %env<SERVER_NAME> //  %env<HOSTNAME> // 'localhost';
   %new<remote-address> = %env<REMOTE_ADDRESS> // '';
   %new<user-agent> = %env<HTTP_USER_AGENT> // 'unknown';
   %new<uri> = %env<REQUEST_URI> // '';
