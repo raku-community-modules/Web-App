@@ -2,10 +2,10 @@
 
 BEGIN { @*INC.push: './lib'; }
 
-use HTTP::Server::Simple::PSGI;
+use HTTP::Easy::PSGI;
 use WWW::App;
 
-my $psgi = HTTP::Server::Simple::PSGI.new(8080);
+my $psgi = HTTP::Easy::PSGI.new(:port(8080));
 my $app = WWW::App.new($psgi);
 
 my $handler = sub ($req, $res) {

@@ -36,10 +36,13 @@ redirect() to automatically create appropriate headers.
 Puts the above two together, along with a backend engine, 
 and makes building web apps really easy.
 
-Currently it supports the following backend engines:
+Currently it fully supports the following backend engines:
 
   SCGI
   HTTP::Easy::PSGI               (including POST data.)
+
+There is also untested support for:
+
   HTTP::Server::Simple::PSGI     (no POST data support.)
 
 I am also planning to implement libraries using a compatible API

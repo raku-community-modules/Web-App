@@ -2,6 +2,6 @@
   "name"        : "WWW::App",
   "version"     : "*",
   "description" : "Three libraries for building web apps in Perl 6",
-  "depends"     : [ "SCGI" ],
+  "depends"     : [ "SCGI", "HTTP::Easy" ],
   "source-url"    : "git://github.com/supernovus/perl6-www-app.git"
 }
