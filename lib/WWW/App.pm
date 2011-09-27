@@ -163,3 +163,4 @@ multi method run () {
   self!dispatch: $controller;
 }
 
+## End of class.
