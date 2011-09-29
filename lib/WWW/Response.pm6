@@ -51,3 +51,4 @@ method insert (Str $text) {
 method response {
   return [ $.status, @.headers, @.body ];
 }
+
