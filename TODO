@@ -2,6 +2,5 @@
   - Sending files should be made easy.
 * Add multipart decoding to WWW::Request
   - File uploads must be handled.
-* Create Lighter as an external project, using WWW::App.
-  - Replaces the Lighter implementation in ww6.
+    NOTE: Due to the current method, large file support will have to wait.
 

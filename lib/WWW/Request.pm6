@@ -20,6 +20,7 @@ has $.user-agent;
 has %.env;
 has %.params;
 has %.cookies;
+has %.files;
 
 method new(%env) {
   my %new = { 'env' => %env };
@@ -82,8 +83,8 @@ method !initialize {
       when 'application/x-www-form-urlencoded' {
         self.parse-params($.body);
       }
-      when 'multipart/form-data' {
-        self.parse-multipart($.body);
+      when /^ 'multipart/form-data' / {
+        self.parse-multipart($.body, $.type);
       }
     }
   }
@@ -182,8 +183,16 @@ method get (:$default, *@keys) {
   return $default;
 }
 
-method parse_multipart (Str $string) {
-  ## TODO: Implement this.
+method parse-multipart (Str $string, Str $content-type) {
+  my $boundary;
+  if $content-type ~~ /'boundary='(.*?)$/ {
+    $boundary = $0;
+  }
+  else {
+    warn "No multipart boundary found, could not continue";
+    return;
+  }
+  ## TODO: Finish implementing me.
   die "multipart parsing not implemented yet, sorry.";
 }
 
