@@ -38,7 +38,7 @@ and makes building web apps really easy.
 
 Currently it fully supports the following backend engines:
 
-  SCGI
+  SCGI                           (Highly recommended.)
   HTTP::Easy::PSGI               (including POST data.)
 
 There is also untested support for:
@@ -47,6 +47,8 @@ There is also untested support for:
 
 I am also planning to implement libraries using a compatible API
 for standard CGI, FastCGI and possibly mod_perl6.
+
+The SCGI adapter is the most mature and stable, and is recommended.
 
 The engine object must either have a handle() method that takes
 an subroutine as its parameter (the subroutine must accept a hash that

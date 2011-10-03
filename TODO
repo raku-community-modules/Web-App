@@ -1,4 +1,6 @@
 * Test multipart functionality, and ensure it works.
 * Add more pre-canned headers and automation to WWW::Response
   - Sending files should be made easy.
+* Do more testing on the HTTP::Easy::PSGI adapter and find out why
+  it crashes in the test files after 3 reloads.
 
