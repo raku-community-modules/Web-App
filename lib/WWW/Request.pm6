@@ -45,8 +45,8 @@ method new(%env) {
   %new<proto> = %env<HTTPS> ?? 'https' !! 'http';
   %new<content-length> = +%env<CONTENT_LENGTH> // 0;
   %new<remote-host> = %env<REMOTE_HOST> // %new<remote-address>;
-  ## Now, if we're POST, let's get the body.
-  if %new<method> eq 'POST' {
+  ## Now, if we're POST or PUT, let's get the body.
+  if %new<method> eq 'POST' | 'PUT' {
     if (%env<MODPERL6>) {
       my $body;
       my $r = Apache::Requestrec.new();
@@ -198,12 +198,27 @@ method get (Stringy :$default, Bool :$multiple, *@keys) {
     if %.params.exists($key.Str) {
       my $return = %.params{$key};
       if (! $multiple) && $return ~~ Array {
-        return %.params{$key}[0];
+        return $return[0];
       }
-      return %.params{$key};
+      return $return;
     }
   }
   return $default;
+}
+
+## Get a file by it's upload field id.
+## By default it will return only the first
+## file found for the given upload field.
+## Pass the :multiple option if you want multiples.
+method file (Stringy $field, Bool :$multiple) {
+  if %.files.exists($field) {
+    my $file = %.files{$field};
+    if (! $multiple) && $file ~~ Array {
+      return $file[0];
+    }
+    return $file;
+  }
+  return Nil; ## Nothing found, sorry.
 }
 
 ## Parse multipart/form-data.
