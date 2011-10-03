@@ -1,5 +1,8 @@
 class WWW::Request;
 
+use WWW::Request::Multipart; ## Multipart context parsers.
+use WWW::Request::File;      ## Uploaded files.
+
 ## Based on my old WebRequest class, which itself was based on the CGI.pm
 ## from the November project as well as Web::Request from the Web project.
 
@@ -20,7 +23,9 @@ has $.user-agent;
 has %.env;
 has %.params;
 has %.cookies;
-has %.files;
+has %.files;   ## Indexed by the formid.
+
+constant $CRLF = "\x0D\x0A";
 
 method new(%env) {
   my %new = { 'env' => %env };
@@ -58,7 +63,7 @@ method new(%env) {
         %new<body> = $input;
       }
       elsif $input ~~ Array {
-        %new<body> = $input.join("\x0D\x0A"); ## Join with CRLF.
+        %new<body> = $input.join($CRLF); ## Join with CRLF.
       }
       elsif $input ~~ IO {
         %new<body> = $input.slurp;
@@ -77,14 +82,22 @@ method !initialize {
   if $.query-string {
     self.parse-params($.query-string);
   }
-  ## Now, let's parse our POST arguments.
-  if $.method eq 'POST' {
+  ## Now, let's parse our POST/PUT arguments.
+  if $.method eq 'POST' | 'PUT' {
     given $.type {
       when 'application/x-www-form-urlencoded' {
         self.parse-params($.body);
       }
       when /^ 'multipart/form-data' / {
-        self.parse-multipart($.body, $.type);
+        my $boundary;
+        if $.type ~~ /'boundary='(.*?)$/ {
+          $boundary = $0;
+        }
+        else {
+          warn "No multipart boundary found, could not continue";
+          return;
+        }
+        self.parse-multipart($.body, $boundary);
       }
     }
   }
@@ -153,19 +166,23 @@ sub decode_urlencoded_utf8($str) {
   return $r;
 }
 
-method add-param (Str $key, $value) {
-  if %.params.exists($key) {
-    if %.params{$key} ~~ Array {
-      %.params{$key}.push($value);
+method add-param (Str $key, $value, %params=%.params) {
+  if %params.exists($key) {
+    if %params{$key} ~~ Array {
+      %params{$key}.push($value);
     }
     else {
-      my $old_param = %.params{$key};
-      %.params{$key} = [ $old_param, $value ];
+      my $old_param = %params{$key};
+      %params{$key} = [ $old_param, $value ];
     }
   }
   else {
-    %.params{$key} = $value;
+    %params{$key} = $value;
   }
+}
+
+method add-file (WWW::Request::File $file) {
+  return self.add-param($file.formname, $file, %.files);
 }
 
 method param ($key) {
@@ -174,25 +191,44 @@ method param ($key) {
 
 ## Look for parameters, return first one found, or optional default value.
 ##   $request.get(:default("world"), 'hello', 'hi', howdy');
-method get (:$default, *@keys) {
+## By default if the field had more than one value passed, only the first
+## value is returned. If you want all, specify the :multiple option.
+method get (Stringy :$default, Bool :$multiple, *@keys) {
   for @keys -> $key {
     if %.params.exists($key.Str) {
+      my $return = %.params{$key};
+      if (! $multiple) && $return ~~ Array {
+        return %.params{$key}[0];
+      }
       return %.params{$key};
     }
   }
   return $default;
 }
 
-method parse-multipart (Str $string, Str $content-type) {
-  my $boundary;
-  if $content-type ~~ /'boundary='(.*?)$/ {
-    $boundary = $0;
+## Parse multipart/form-data.
+method parse-multipart (Str $string, Str $boundary) {
+  my @content = $string.split($CRLF);
+  my @context = WWW::Request::Multipart.new(:$boundary);
+  for @content -> $line {
+    if @context {
+      my $context = @context[0];
+      my $parse = $context.parse-line($line);
+      if $parse ~~ WWW::Request::Multipart {
+        @context.unshift: $parse;
+      }
+      elsif $context.done {
+        for $context.parts -> $part {
+          if $part ~~ WWW::Request::File {
+            self.add-file($part);
+          }
+          elsif $part ~~ Pair {
+            self.add-param($part.key, $part.value);
+          }
+        }
+        @context.shift; 
+      }
+    }
   }
-  else {
-    warn "No multipart boundary found, could not continue";
-    return;
-  }
-  ## TODO: Finish implementing me.
-  die "multipart parsing not implemented yet, sorry.";
 }
 
