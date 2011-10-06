@@ -2,24 +2,25 @@
 
 BEGIN { @*INC.push: './lib'; }
 
-use SCGI;
+#use SCGI;
+use HTTP::Easy::PSGI;
 use WWW::App;
 
-my $scgi = SCGI.new(:port(8118), :PSGI, :!strict, :debug);
-my $app = WWW::App.new($scgi);
+my $http = HTTP::Easy::PSGI.new(:debug);
+#my $scgi = SCGI.new(:port(8118), :PSGI, :!strict, :debug);
+my $app = WWW::App.new($http);
 
 my $handler = sub ($req, $res) {
   $res.set-status(200);
   $res.content-type('text/html');
   my $img = $req.file('myimg');
-  $res.say("<html><head><title>Form test</title></head><body>");
-  $req.say('<form method="POST">');
-  $req.say('<input type="file" name="myfile" />');
-  $req.say('<input type="submit" value="Go" />');
+  my $start = slurp('test/form-start.html');
+  $res.send($start);
   if ($img) {
-    $req.say("Filename: "~$img.temppath);
+    $res.send("Filename: "~$img.temppath);
   }
-  $req.say("</form></body></html>");
+  my $finish = slurp('test/form-end.html');
+  $res.send($finish);
 }
 
 $app.run: $handler;

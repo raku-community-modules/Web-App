@@ -12,7 +12,8 @@ my $handler = sub ($req, $res) {
   $res.set-status(200);
   $res.content-type('text/plain');
   my $name = $req.get(:default<World>, 'name');
-  $res.say("Hello $name");
+  $res.send("Hello $name");
+  $res.send("How are you today?");
 }
 
 $app.run: $handler;

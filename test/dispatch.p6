@@ -19,7 +19,7 @@ my $main = sub ($req, $res, $rules?) {
   $res.set-status(200);
   $res.content-type('text/plain');
   my $name = $req.get(:default<World>, 'name');
-  $res.say("Hello $name");
+  $res.send("Hello $name");
 }
 
 ## The :default only gets called if no other

@@ -103,11 +103,11 @@ This is an example of the use of WWW::App and it's wrapper magic.
 
   my $handler = sub ($req, $res) {
     $res.content-type('text/plain');
-    $res.say("Request parameters:");
-    $res.say($req.params.fmt('%s: %s', "\n"));
+    $res.send("Request parameters:");
+    $res.send($req.params.fmt('%s: %s', "\n"));
     my $name = $req.get('name');
     if $name {
-      $res.say("Hello $name");
+      $res.send("Hello $name");
     }
   }
 
@@ -131,11 +131,11 @@ SCGI, without using WWW::App as a wrapper.
     my $res = WWW::Response.new();
     $res.set-status(200);
     $res.add-header('Content-Type' => 'text/plain');
-    $res.say("Request parameters:");
-    $res.say($req.params.fmt('%s: %s', "\n"));
+    $res.send("Request parameters:");
+    $res.send($req.params.fmt('%s: %s', "\n"));
     my $name = $req.get('name');
     if $name {
-      $res.say("Hello $name");
+      $res.send("Hello $name");
     }
     return $res.response;
   }

@@ -36,11 +36,7 @@ method insert-header (Pair $header) {
   @.headers.unshift: $header;
 }
 
-method say (Str $text) {
-  @.body.push: $text~"\x0D\x0A"; ## Use CRLF.
-}
-
-method print (Str $text) {
+method send (Str $text) {
   @.body.push: $text;
 }
 
@@ -49,6 +45,8 @@ method insert (Str $text) {
 }
 
 method response {
-  return [ $.status, @.headers, @.body ];
+  my $headers = @.headers;
+  my $body    = @.body;
+  return [ $.status, $headers, $body ];
 }
 

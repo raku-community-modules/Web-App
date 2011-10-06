@@ -7,11 +7,11 @@ use WWW::App::MethodHandler;
 class TestHandler is WWW::App::MethodHandler {
   method handle_test (:$res, :$req, :$def, *@params) {
     $res.content-type: 'text/plain';
-    $res.say("This is a test.");
+    $res.send("This is a test.");
   }
   method handle_duh (:$res, :$req, :$def, *@params) {
     $res.content-type: 'text/html';
-    $res.say("<html><head><title>A Test</title></head><body>A Test</body></html>");
+    $res.send("<html><head><title>A Test</title></head><body>A Test</body></html>");
   }
 }
 
