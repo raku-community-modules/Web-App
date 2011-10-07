@@ -1,6 +1,7 @@
 = Priority is a number from 1 to 9 where 1 is the highest priority. =
 
 [2] Fix binary uploads.
+    Probably need to look at the Buf class, and how to use it.
 [4] Add more pre-canned headers and automation to WWW::Response
     Sending files back to client should be made easy.
 [7] Do more testing on the HTTP::Easy::PSGI adapter. It's sometimes unstable.

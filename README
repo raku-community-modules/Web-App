@@ -65,6 +65,8 @@ It works. There are more planned features, see TODO for details.
 
  - Rakudo Perl 6
    http://rakudo.org/
+ - MIME::Types
+   http://github.com/supernovus/perl6-mime-types
 
 = Supported Engine Modules =
 

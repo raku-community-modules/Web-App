@@ -6,6 +6,7 @@ class WWW::App::Context;
 
 use WWW::Request;
 use WWW::Response;
+use MIME::Types;
 
 has $.req;   ## Will contain the WWW::Request object.
 has $.res;   ## Will contain the WWW::Response object.
@@ -19,7 +20,8 @@ method new (%env, $app) {
   self.bless(*, :$req, :$res, :$app);
 }
 
-## Magic methods using both Request and Response
+## Magic methods, extending the functionality possible in the
+## standard Request/Response objects.
 
 ## A magical version of redirect, based on ww6.
 method redirect (Stringy $url, $status=302) {
@@ -44,6 +46,21 @@ method redirect (Stringy $url, $status=302) {
     $url ~= $relurl;
   }
   $.res.redirect($url, $status);
+}
+
+## A magical version of send-file, that automatically determines
+## the file-type if you don't pass it one, using the mime() method.
+method send-file ($filename, :$file, :$content, :$type, Bool :$cache) {
+  my $ctype;
+  if $type { $ctype = $type; }
+  else {
+    my $ext = $filename.split('.').pop;
+    $ctype = $.app.mime.type($ext);
+    if (!$ctype) {
+      $ctype = 'application/octet-stream';
+    }
+  }
+  $.res.send-file($filename, :$file, :$content, :$cache, :type($ctype));
 }
 
 ## Response wrapper methods
@@ -76,6 +93,16 @@ method path {
 
 method host {
   $.req.host;
+}
+
+## WWW::App wrapper methods
+
+method load-mime ($ufile) {
+  $.app.load-mime($ufile);
+}
+
+method mime {
+  $.app.mime;
 }
 
 ## End of library.

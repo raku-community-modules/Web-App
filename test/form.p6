@@ -43,20 +43,7 @@ my $handler = sub ($context) {
       ## TODO: make this use the new file serving methods once they
       ## are implemented.
       my ($fakens, $tempfile, $filename) = $context.path.split('/');
-      my $ctype;
-      given $filename {
-        ## We support the most common image types used on the web.
-        when /\.jpe?g?$/ { $ctype = 'image/jpeg';    }
-        when /\.gif$/    { $ctype = 'image/gif';     }
-        when /\.png$/    { $ctype = 'image/png';     }
-        when /\.svg$/    { $ctype = 'image/svg+xml'; }
-      }
-      $context.content-type("$ctype; name=\"$filename\"");
-      my $disp = "inline; filename=\"$filename\"";
-      $context.add-header('Content-Disposition' => $disp);
-      $context.add-header('Cache-Control' => 'no-cache');
-      my $content = slurp("/tmp/$tempfile");
-      $context.send($content);
+      $context.send-file($filename, :file($tempfile));
     }
     default {
       $context.set-status(404);

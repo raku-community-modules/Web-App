@@ -5,9 +5,33 @@ use WWW::App::Context;
 has $.engine; ## The engine to handle requests.
 has @!rules;  ## Optional rules for the dispatch-based run();
 
+has $!mime;   ## MIME::Types object. Initialized on first use of mime().
+
 ## Create a new object, pass it an engine object.
 method new ($engine) {
   return self.bless(*, :$engine);
+}
+
+## Load a mime file.
+method load-mime ($ufile) {
+  $!mime = MIME::Types.new($ufile);
+}
+
+## Return the MIME::Types object.
+## If it hasn't been created, we will try to
+## find a default mime.types, otherwise, we will bail.
+## This is currently hard coded to the /etc/mime.types,
+## which honestly, is pretty Linux/Unix specific.
+## Please, for the love of whatever is sacred to you,
+## manually call load-mime() in your scripts!
+method mime  {
+  if ! defined $!mime {
+    if "/etc/mime.types".IO !~~ :f {
+      die "Attempt to use Context.mime before loading the mime.types file.";
+    }
+    self.load-mime("/etc/mime.types");
+  }
+  return $!mime;
 }
 
 ## A version of run for a single handler.
