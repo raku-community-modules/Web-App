@@ -73,8 +73,9 @@ method get {
 
 ## Return the lines.
 method lines {
-  if $.temppath && $.tempppath.IO ~~ :f {
-    return lines($.temppath);
+  my $string = self.slurp;
+  if $string {
+    return $string.lines;
   }
   return;
 }
