@@ -1,7 +1,7 @@
 = Priority is a number from 1 to 9 where 1 is the highest priority. =
 
-[1] Fix file uploads, so the content is actually saved!
 [4] Add more pre-canned headers and automation to WWW::Response
     Sending files back to client should be made easy.
 [7] Do more testing on the HTTP::Easy::PSGI adapter. It's sometimes unstable.
+    This TODO item probably belongs in HTTP::Easy's TODO list.
 

@@ -6,8 +6,9 @@ has $.formname;            ## The HTML form name.
 has $.filename;            ## The filename for the upload.
 has $.content-type is rw;  ## The plain value for Content-Type with no options.
 has @.headers is rw;       ## The MIME headers.
-has $.temppath is rw;      ## Where we've stored the actual file.
-has $!output is rw;        ## Our IO object for output.
+has $.temppath;            ## Where we've stored the actual file.
+has $.output;              ## Our IO object for output.
+has $!wrote;               ## Set to the last line written.
 
 constant $CRLF = "\x0D\x0A";
 
@@ -27,26 +28,35 @@ method delete {
 
 ## Print to the file, with no newlines.
 method print (*@lines) {
-  if $!output {
-    $!output!print(|@lines);
+  if defined $!output {
+    $!output.print(|@lines);
+    $!wrote = @lines.join;
   }
 }
 
 ## Use "say" on the file.
 method say (*@lines) {
-  if $!output {
-    $!output!say(|@lines);
+  if defined $!output {
+    $!output.say(|@lines);
+    $!wrote = @lines.join;
   }
 }
 
-## Print a string to the file, but with CRLF at the end.
+## Print a string to the file.
+## It will separate lines by CRLF, but only
+## if there is more than one line to write.
+## It's meant for use with Multipart, which splits
+## by CRLF rather than LF.
 method out ($string) {
-  self.print($string~$CRLF);
+  if defined $!wrote && $!wrote !~~ /$CRLF$/ {
+    self.print($CRLF);
+  }
+  self.print($string);
 }
 
 ## Close, close the output IO object, and return this.
 method close {
-  if $!output {
+  if defined $!output {
     $!output.close; ## Close the IO.
     $!output = Nil; ## Kill the IO.
   }

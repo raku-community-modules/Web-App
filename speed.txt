@@ -51,9 +51,9 @@ Notes
   the tests from a proper server at some point may be a good idea.
 
   The general consensus I can see from the tests is, SCGI via a traditional
-  web server, is currently the fastest way to server Perl 6 web apps, but
-  for rapid testing purposes, a standalone HTTP server is fast enough to
-  test without getting too frustrated with the speed.
+  web server, is currently the fastest way to serve Perl 6 web apps.
+  For rapid testing purposes however, a standalone pure Perl 6 HTTP server 
+  is fast enough to test without getting frustrated with the speed.
 
   Of course, all of these are extremely simple tests, I'm sure a larger
   web application would be significantly slower.

@@ -89,7 +89,7 @@ method parse-line (Stringy $line) {
   }
   else {
     if $!file {
-      $!file.out($line);  ## Output the line, with CRLF.
+      $!file.out($line);  ## Output the line, with CRLF if needed.
     }
     else {
       $.value ~= $line;   ## Add to our own value.
