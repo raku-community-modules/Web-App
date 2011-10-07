@@ -9,26 +9,28 @@ use MethodHandler;
 
 class TestHandler is MethodHandler {
   method handle_test ($context, *@params) {
-    $res.content-type: 'text/plain';
-    $res.send("This is a test.");
+    $context.content-type: 'text/plain';
+    $context.send("This is a test.");
   }
   method handle_duh ($context, *@params) {
-    $res.content-type: 'text/html';
-    $res.send("<html><head><title>A Test</title></head><body>A Test</body></html>");
+    $context.content-type: 'text/html';
+    $context.send("<html><head><title>A Test</title></head><body>A Test</body></html>");
   }
 }
 
 use HTTP::Easy::PSGI;
+#use SCGI;
 use WWW::App;
 
 my $psgi = HTTP::Easy::PSGI.new(:port(8080));
+#my $scgi = SCGI.new(:port(8118), :PSGI, :debug);
 my $app = WWW::App.new($psgi);
 
 my $main = sub ($context) {
   $context.set-status(200);
   $context.content-type('text/plain');
   my $name = $context.get(:default<World>, 'name');
-  $context.say("Hello $name");
+  $context.send("Hello $name");
 }
 
 ## The :default only gets called if no other
