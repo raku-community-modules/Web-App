@@ -14,7 +14,7 @@ constant $CRLF = "\x0D\x0A";
 
 ## We take the form name, and filename as our parameters.
 method new ($formname!, $filename!) {
-  my $temppath = "/tmp/wrf-{time}.$*PID";
+  my $temppath = "/tmp/wrf-$formname-{time}.$*PID";
   my $output   = open($temppath, :w);
   return self.bless(*, :$formname, :$filename, :$temppath, :$output);
 }
@@ -96,7 +96,7 @@ method header ($name, Bool :$multiple, Bool :$opts) {
   my @results;
   for @.headers -> $header {
     ## Headers are stored as a Pair.
-    if $header.key.lc eq $name { 
+    if $header.key ~~ $name { 
       my $result = $header.value;
       if $multiple {
         if $opts {
@@ -118,6 +118,28 @@ method header ($name, Bool :$multiple, Bool :$opts) {
   else {
     return Nil;
   }
+}
+
+method copy (Stringy $destination) {
+  ## This should really use the IO.copy function/method.
+  ## But, it's currently not implemented in Rakudo nom.
+  ## So, this is a temporary workaround.
+  ## Based on the File::Copy lib formerly in perl6-File-Tools by tadzik.
+  if $.temppath && $.temppath.IO ~~ :f {
+    my $from = open($.temppath,   :r, :bin);
+    my $to   = open($destination, :w, :bin);
+    $to.write($from.read(4096)) until $from.eof;
+    $from.close;
+    $to.close;
+  }
+}
+
+method move (Stringy $destination) {
+  ## This is as big of a hack as copy, and in fact, uses it.
+  ## There should be a move/rename command in Rakudo's IO, so this is
+  ## a temporary workaround.
+  self.copy($destination); ## Copy to the new location.
+  self.delete;             ## Now delete!
 }
 
 method perl {
