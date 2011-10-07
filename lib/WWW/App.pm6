@@ -1,7 +1,6 @@
 class WWW::App;
 
-use WWW::Request;
-use WWW::Response;
+use WWW::App::Context;
 
 has $.engine; ## The engine to handle requests.
 has @!rules;  ## Optional rules for the dispatch-based run();
@@ -17,11 +16,10 @@ method new ($engine) {
 ## using the dispatch rules version of run();
 multi method run (&app) {
   my $handler = sub (%env) {
-    my $req = WWW::Request.new(%env);
-    my $res = WWW::Response.new();
-    app($req, $res); ## Call our method. We don't care what it returns.
-    if (!$res.status) { $res.set-status(200); }
-    return $res.response;
+    my $context = WWW::App::Context.new(%env, self);
+    app($context); ## Call our method. We don't care what it returns.
+    if (!$context.res.status) { $context.res.set-status(200); }
+    return $context.res.response;
   }
   self!dispatch: $handler;
 }
@@ -55,36 +53,15 @@ method insert (*%rules) {
 }
 
 ## Handle code blocks or objects as handlers.
-method !process ($rules, $res, $req) {
+method !process ($handler, $context) {
   my $processed = False;
-  my $handler = $rules<handler>;
   if $handler ~~ Callable {
-    $processed = $handler($req, $res, $rules);
+    $processed = $handler($context);
   }
   elsif $handler.can('handle') {
-    $processed = $handler.handle($req, $res, $rules);
+    $processed = $handler.handle($context);
   }
   return $processed;
-}
-
-## A magical version of redirect, based on ww6.
-method redirect ($req, $res, $url, $status=302) {
-  if $url !~~ /^\w+\:\/\// {
-    my $proto = $req.proto;
-    my $oldurl = '';
-    if $url ~~ /^https?$/ {
-      $proto = $url;
-      $oldurl = $req.uri;
-    }
-    else {
-      if $url !~~ /^\// { $oldurl = '/'; }
-      $oldurl ~= $url;
-    }
-    $url = $proto ~ '://' ~ $req.host;
-    if $req.port != 80 | 443 { $url ~= ':' ~ $req.port }
-    $url ~= $oldurl;
-  }
-  $res.redirect($url, $status);
 }
 
 ## A version of run that dispatches based on rules.
@@ -94,8 +71,9 @@ method redirect ($req, $res, $url, $status=302) {
 ## Dispatch plugin.
 multi method run () {
   my $controller = sub (%env) {
-    my $req = WWW::Request.new(%env);
-    my $res = WWW::Response.new();
+    my $context = WWW::App::Context.new(%env, self);
+    my $req = $context.req; 
+    my $res = $context.res;
     my $default; ## Used if no other rules match.
     my $handled = False;
     for @!rules -> $rules {
@@ -131,7 +109,7 @@ multi method run () {
       if $rules<redirect> {
         my $status = 302;
         if $rules<status> { $status = $rules<status>; }
-        self.redirect($req, $res, $rules<redirect>, $status);
+        $context.redirect($rules<redirect>, $status);
         $handled = True; ## A redirection counts as a handler.
         last; ## A redirect ends the rule parsing.
       }
@@ -143,7 +121,8 @@ multi method run () {
       ## The handler must return True if it handled the process, or False
       ## if it didn't.
       if $rules.exists('handler') {
-        my $processed = self!process($rules, $res, $req);
+        $context.rules = $rules;
+        my $processed = self!process($rules<handler>, $context);
         if $processed {
           $handled = True;
           if ($rules<last>) { last; } ## Stop processing further rules.
@@ -151,7 +130,8 @@ multi method run () {
       }
     }
     if !$handled && defined $default {
-      $handled = self!process($default, $res, $req);
+      $context.rules = $default;
+      $handled = self!process($default<handler>, $context);
     }
     if (!$res.status) {
       my $status = 500;

@@ -30,22 +30,22 @@ has $.done       is rw = False;   ## Set to true when parsing is complete.
 method parse-mime-header (Str $header) {
   my ($name, $values) = $header.split(': ', 2);
   my ($value, @opts)  = $values.split(/';'\s*/);
-  my %opts;
+  my $opts = {};
   for @opts -> $opt {
     my ($key, $val) = $opt.split('=', 2);
     $val ~~ s/^'"'//; ## Strip off leading " mark.
     $val ~~ s/'"'$//; ## Strip off following " mark.
-    %opts{$key} = $val;
+    $opts{$key} = $val;
   }
-  return $name => [ $value, %opts ];
+  return $name => [ $value, $opts ];
 }
 
 ## Parse one of our lines.
 method parse-line (Stringy $line) {
-  if $line ~~ / ^ '--' $.boundary / { ## Beginning/End of a part.
-    if $!file {
+  if $line ~~ / ^ '--' {$.boundary} / { ## Beginning/End of a part.
+    if defined $!file {
       $!file.headers = @!headers;
-      @.parts.push: $.file.close; ## Close the file.
+      @.parts.push: $!file.close; ## Close the file.
     }
     elsif $.formid && $!value {
       @.parts.push: $.formid => $!value;
@@ -88,8 +88,8 @@ method parse-line (Stringy $line) {
     }
   }
   else {
-    if $.file {
-      $.file.out($line);  ## Output the line, with CRLF.
+    if $!file {
+      $!file.out($line);  ## Output the line, with CRLF.
     }
     else {
       $.value ~= $line;   ## Add to our own value.

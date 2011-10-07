@@ -90,8 +90,8 @@ method !initialize {
       }
       when /^ 'multipart/form-data' / {
         my $boundary;
-        if $.type ~~ /'boundary='(.*?)$/ {
-          $boundary = $0;
+        if $.type ~~ /'boundary='(.*)$/ {
+          $boundary = $0.Str;
         }
         else {
           warn "No multipart boundary found, could not continue";
@@ -166,23 +166,26 @@ sub decode_urlencoded_utf8($str) {
   return $r;
 }
 
-method add-param (Str $key, $value, %params=%.params) {
-  if %params.exists($key) {
-    if %params{$key} ~~ Array {
-      %params{$key}.push($value);
+method add-param (Str $key, $value, Bool :$files) {
+  my $params;
+  if ($files) { $params = %.files; }
+  else        { $params = %.params; }
+  if $params.exists($key) {
+    if $params{$key} ~~ Array {
+      $params{$key}.push($value);
     }
     else {
-      my $old_param = %params{$key};
-      %params{$key} = [ $old_param, $value ];
+      my $old_param = $params{$key};
+      $params{$key} = [ $old_param, $value ];
     }
   }
   else {
-    %params{$key} = $value;
+    $params{$key} = $value;
   }
 }
 
 method add-file (WWW::Request::File $file) {
-  return self.add-param($file.formname, $file, %.files);
+  return self.add-param($file.formname, $file, :files);
 }
 
 method param ($key) {

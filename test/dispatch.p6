@@ -4,8 +4,8 @@ BEGIN { @*INC.push: './lib'; }
 
 class TestHandler {
   has $.site;
-  method handle ($req, $res, $rules?) {
-    $res.redirect($.site);
+  method handle ($context) {
+    $context.redirect($.site);
   }
 }
 
@@ -15,11 +15,11 @@ use WWW::App;
 my $scgi = SCGI.new(:port(8118), :PSGI, :!strict, :debug);
 my $app = WWW::App.new($scgi);
 
-my $main = sub ($req, $res, $rules?) {
-  $res.set-status(200);
-  $res.content-type('text/plain');
-  my $name = $req.get(:default<World>, 'name');
-  $res.send("Hello $name");
+my $main = sub ($context) {
+  $context.set-status(200);
+  $context.content-type('text/plain');
+  my $name = $context.get(:default<World>, 'name');
+  $context.send("Hello $name");
 }
 
 ## The :default only gets called if no other

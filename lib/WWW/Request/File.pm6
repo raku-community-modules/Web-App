@@ -110,3 +110,7 @@ method header ($name, Bool :$multiple, Bool :$opts) {
   }
 }
 
+method perl {
+  return "WWW::Request::File<$.filename>";
+}
+

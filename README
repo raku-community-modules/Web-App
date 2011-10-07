@@ -7,11 +7,11 @@ meant as a more generic framework to replace my ww6 framework (which
 is officially retired.) Like ww6, it is very flexible, unlike it, it
 doesn't try to be everything under the sun.
 
-It consists of three libraries:
+It consists of a few libraries, the most important of which are:
 
-  WWW::Request contains information about the HTTP request.
-  WWW::Response builds a PSGI compliant response.
-  WWW::App wraps those two, and uses backend engines to handle the rest.
+  WWW::Request   contains information about the HTTP request.
+  WWW::Response  builds a PSGI compliant response.
+  WWW::App       A minimal web framework, uses backend engines.
 
 The first two libraries can be used by themselves if the full functionality
 of WWW::App is not required.
@@ -36,19 +36,12 @@ redirect() to automatically create appropriate headers.
 Puts the above two together, along with a backend engine, 
 and makes building web apps really easy.
 
-Currently it fully supports the following backend engines:
+Backend engines currently include SCGI and standalone HTTP modules.
+See the list below for details of which libraries to use.
 
-  SCGI                           (Highly recommended.)
-  HTTP::Easy::PSGI               (including POST data.)
-
-There is also untested support for:
-
-  HTTP::Server::Simple::PSGI     (no POST data support.)
-
-I am also planning to implement libraries using a compatible API
-for standard CGI, FastCGI and possibly mod_perl6.
-
-The SCGI adapter is the most mature and stable, and is recommended.
+Other adapters could be made once libraries are available.
+The best example I could think of is FastCGI, which currently
+has no implementation on Perl 6.
 
 The engine object must either have a handle() method that takes
 an subroutine as its parameter (the subroutine must accept a hash that
@@ -66,24 +59,32 @@ handle() method.) A default handler can be called if no rules are matched.
 
 = Status =
 
-Stable, but with several planned features, see TODO for more details.
+It works. There are more planned features, see TODO for details.
 
 = Requirements =
 
  - Rakudo Perl 6
    http://rakudo.org/
 
-= Optional Modules =
+= Supported Engine Modules =
 
   - SCGI
-    http://github.com/supernovus/SCGI
+    Offers the best integration with existing web servers, such as
+    Apache, lighttpd, etc. It's like FastCGI, only simpler!
+    URL: http://github.com/supernovus/SCGI
 
   - HTTP::Easy
-    http://github.com/supernovus/perl6-http-easy
+    WWW::App supports the HTTP::Easy::PSGI adapter, which provides a nice
+    clean standalone HTTP server with PSGI application support.
+    This provides GET and POST support including multipart/form-data.
+    URL: http://github.com/supernovus/perl6-http-easy
+
+= Unsupported Engine Modules =
 
   - HTTP::Server::Simple
-    http://github.com/mberends/http-server-simple
-
+    This library has not been tested (it was not compiling under nom)
+    and does not have complete support for POST data.
+    URL: http://github.com/mberends/http-server-simple
 
 Note: You can use WWW::Request and WWW::Response with whatever backend
       you want, including regular CGI, but I don't recommend using CGI.
@@ -94,6 +95,9 @@ Note: You can use WWW::Request and WWW::Response with whatever backend
 = Example 1 =
 
 This is an example of the use of WWW::App and it's wrapper magic.
+Handlers for WWW::App are sent a special WWW::App::Context object
+which wraps the Request and Response, and provides some extra magic
+that makes life a lot easier.
 
   use SCGI;
   use WWW::App;
@@ -101,14 +105,21 @@ This is an example of the use of WWW::App and it's wrapper magic.
   my $scgi = SCGI.new(:port(8118), :PSGI); ## Make sure to set PSGI mode!
   my $app = WWW::App.new($scgi);
 
-  my $handler = sub ($req, $res) {
-    $res.content-type('text/plain');
-    $res.send("Request parameters:");
-    $res.send($req.params.fmt('%s: %s', "\n"));
-    my $name = $req.get('name');
-    if $name {
-      $res.send("Hello $name");
-    }
+  my $handler = sub ($context) {
+    given $context.path {
+      when '/' {
+        $context.content-type('text/plain');
+        $context.send("Request parameters:");
+        $context.send($context.req.params.fmt('%s: %s', "\n"));
+        my $name = $context.get('name');
+        if $name {
+          $context.send("Hello $name");
+        }
+      }
+      default {
+        ## We don't support anything else, send them home.
+        $context.redirect('/');
+      }
   }
 
   $app.run: $handler;
@@ -118,13 +129,13 @@ This is an example of the use of WWW::App and it's wrapper magic.
 = Example 2 =
 
 This is an example of using WWW::Request and WWW::Response together with
-SCGI, without using WWW::App as a wrapper.
+HTTP::Easy's PSGI adapter, without using WWW::App as a wrapper.
 
-  use SCGI;
+  use HTTP::Easy::PSGI;
   use WWW::Request;
   use WWW::Response;
 
-  my $scgi = SCGI.new( :port(8118), :PSGI );
+  my $http = HTTP::Easy::PSGI.new(); ## Default port is 8080.
 
   my $handler = sub (%env) {
     my $req = WWW::Request.new(%env);
@@ -140,7 +151,7 @@ SCGI, without using WWW::App as a wrapper.
     return $res.response;
   }
 
-  $scgi.handle: $handler;
+  $http.handle: $handler;
 
   ## End of script.
 
