@@ -35,5 +35,14 @@ $app.add(:path</test>, :handler($test));
 ## Another form of redirect, as supplied by WWW::App itself.
 $app.add(:path</perl6>, :redirect<http://perl6.org/>);
 
+## A slurp handler.
+$app.add(:path</slurp>, :slurp<./test/test-slurp.txt>);
+
+## A send handler.
+$app.add(:path</send>, :send<This is a test>);
+
+## A sendfile handler.
+$app.add(:path</sendfile>, :sendfile<./test/test-file.xml>);
+
 $app.run;
 

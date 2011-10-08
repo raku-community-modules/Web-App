@@ -1,0 +1,4 @@
+<test>
+  <hello>World</hello>
+  <how action="are" target="you" />
+</test>
