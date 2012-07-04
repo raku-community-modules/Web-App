@@ -36,13 +36,13 @@ $app.add(:path</test>, :handler($test));
 $app.add(:path</perl6>, :redirect<http://perl6.org/>);
 
 ## A slurp handler.
-$app.add(:path</slurp>, :slurp<./test/test-slurp.txt>);
+$app.add(:path</slurp>, :slurp<./examples/test-slurp.txt>);
 
 ## A send handler.
 $app.add(:path</send>, :send<This is a test>);
 
 ## A sendfile handler.
-$app.add(:path</sendfile>, :sendfile<./test/test-file.xml>);
+$app.add(:path</sendfile>, :sendfile<./examples/test-file.xml>);
 
 $app.run;
 

@@ -2,7 +2,7 @@
 
 BEGIN { 
   @*INC.push: './lib'; 
-  @*INC.push: './test';
+  @*INC.push: './examples';
 }
 
 use MethodHandler;
@@ -18,13 +18,13 @@ class TestHandler is MethodHandler {
   }
 }
 
-use HTTP::Easy::PSGI;
-#use SCGI;
+#use HTTP::Easy::PSGI;
+use SCGI;
 use WWW::App;
 
-my $psgi = HTTP::Easy::PSGI.new(:port(8080));
-#my $scgi = SCGI.new(:port(8118), :PSGI, :debug);
-my $app = WWW::App.new($psgi);
+#my $psgi = HTTP::Easy::PSGI.new(:port(8080));
+my $scgi = SCGI.new(:port(8118), :PSGI, :debug);
+my $app = WWW::App.new($scgi);
 
 my $main = sub ($context) {
   $context.set-status(200);
