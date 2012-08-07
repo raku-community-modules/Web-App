@@ -77,7 +77,7 @@ method insert (*%rules) {
 }
 
 ## Handle code blocks or objects as handlers.
-method !process-handler ($handler, $context) {
+method process-handler ($handler, $context) {
   my $processed = False;
   if $handler ~~ Callable {
     $processed = $handler($context);
@@ -182,7 +182,7 @@ method !process-actions ($rules, $context) {
   ## if it didn't.
   if $rules.exists('handler') {
     $context.rules = $rules;
-    my $processed = self!process-handler($rules<handler>, $context);
+    my $processed = self.process-handler($rules<handler>, $context);
     if $processed {
       ## We are handled, and should be considered the last.
       $handled = True;
