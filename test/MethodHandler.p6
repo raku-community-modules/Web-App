@@ -2,7 +2,7 @@
 
 BEGIN { 
   @*INC.push: './lib'; 
-  @*INC.push: './examples';
+  @*INC.push: './test';
 }
 
 use MethodHandler;

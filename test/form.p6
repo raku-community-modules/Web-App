@@ -16,7 +16,7 @@ my $handler = sub ($context) {
       $context.set-status(200);
       $context.content-type('text/html');
       my $file = $context.file('myfile');
-      my $start = slurp('examples/form-start.html');
+      my $start = slurp('test/form-start.html');
       $context.send($start);
       if ($file) {
         my $ftype = $file.header('Content-Type');
@@ -35,7 +35,7 @@ my $handler = sub ($context) {
           $context.send("File uploaded to: "~$file.temppath);
         }
       }
-      my $finish = slurp('examples/form-end.html');
+      my $finish = slurp('test/form-end.html');
       $context.send($finish);
     }
     when /uimages/ {

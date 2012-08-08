@@ -8,9 +8,9 @@ use WWW::Request;
 use WWW::Response;
 use MIME::Types;
 
-has $.req;   ## Will contain the WWW::Request object.
-has $.res;   ## Will contain the WWW::Response object.
-has $.app;   ## Expert use only, contains the WWW::App object that created us.
+has $.req handles <get file path host>;             ## Contains the WWW::Request object.
+has $.res handles <set-status content-type send>;   ## Contains the WWW::Response object.
+has $.app handles <load-mime mime>;                 ## Contains the WWW::App object.
 
 has $.rules is rw; ## Optional. Set to dispatch rules that sent us here.
 
@@ -61,48 +61,6 @@ method send-file ($filename, :$file, :$content, :$type, Bool :$cache) {
     }
   }
   $.res.send-file($filename, :$file, :$content, :$cache, :type($ctype));
-}
-
-## Response wrapper methods
-
-method set-status ($status) {
-  $.res.set-status(+$status);
-}
-
-method content-type (Str $type?) {
-  $.res.content-type($type);
-}
-
-method send (Str $text) {
-  $.res.send($text);
-}
-
-## Request wrapper methods
-
-method get (Stringy :$default, Bool :$multiple, *@keys) {
-  $.req.get(:$default, :$multiple, |@keys);
-}
-
-method file (Stringy $field, Bool :$multiple) {
-  $.req.file($field, :$multiple);
-}
-
-method path {
-  $.req.path;
-}
-
-method host {
-  $.req.host;
-}
-
-## WWW::App wrapper methods
-
-method load-mime ($ufile) {
-  $.app.load-mime($ufile);
-}
-
-method mime {
-  $.app.mime;
 }
 
 ## End of library.
