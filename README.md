@@ -77,17 +77,20 @@ WWW::App::Easy, which builds upon WWW::App and adds an MVC framework on top of i
 ## Connector Engine Modules
 
   * SCGI
+
     Offers the best integration with existing web servers, such as
     Apache, lighttpd, etc. It's like FastCGI, only simpler!
     URL: http://github.com/supernovus/SCGI
 
   * HTTP::Easy
+
     WWW::App supports the HTTP::Easy::PSGI adapter, which provides a nice
     clean standalone HTTP server with PSGI application support.
     This provides GET and POST support including multipart/form-data.
     URL: http://github.com/supernovus/perl6-http-easy
 
   * HTTP::Server::Simple
+
     This library has not been tested, but WWW::App should be able to work with
     the HTTP::Server::Simple::PSGI interface without any modifications.
     URL: http://github.com/mberends/http-server-simple
