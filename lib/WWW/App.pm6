@@ -43,6 +43,9 @@ multi method run (&app) {
     my $context = WWW::App::Context.new(%env, self);
     app($context); ## Call our method. We don't care what it returns.
     if (!$context.res.status) { $context.res.set-status(200); }
+    if (!$context.res.has-header('location') && !$context.res.has-header('content-type')) {
+      $context.content-type: 'text/html';
+    }
     return $context.res.response;
   }
   self!dispatch: $handler;
@@ -241,11 +244,19 @@ multi method run () {
       my $last; ## Ignored here, as this IS the last.
       ($handled, $last) = self!process-actions($default, $context);
     }
+
+    ## Default status.
     if (!$res.status) {
       my $status = 500;
       if $handled { $status = 200; }
       $res.set-status($status); 
     }
+
+    ## Default content-type.
+    if (!$res.has-header('location') && !$res.has-header('content-type')) {
+      $res.content-type: 'text/html';
+    }
+
     return $res.response;
   }
   self!dispatch: $controller;

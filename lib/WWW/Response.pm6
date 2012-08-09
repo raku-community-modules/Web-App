@@ -14,13 +14,17 @@ method content-type (Str $type?) {
     self.add-header('Content-Type' => $type);
   }
   else {
-    for @.headers -> $header {
-      if ($header.key.lc eq 'content-type') {
-        return $header.value;
-      }
-    }
-    return;
+    self.has-header('content-type');
   }
+}
+
+method has-header (Str $wanted) {
+  for @.headers -> $header {
+    if ($header.key.lc eq $wanted.lc) {
+      return $header.value;
+    }
+  }
+  return;
 }
 
 method redirect (Str $url, $status=302) {
