@@ -43,7 +43,7 @@ multi method run (&app) {
     my $context = WWW::App::Context.new(%env, self);
     app($context); ## Call our method. We don't care what it returns.
     if (!$context.res.status) { $context.res.set-status(200); }
-    if (!$context.res.has-header('location') && !$context.res.has-header('content-type')) {
+    if (!$context.res.has-header('content-type') && !$context.res.has-header('location')) {
       $context.content-type: 'text/html';
     }
     return $context.res.response;
@@ -253,7 +253,7 @@ multi method run () {
     }
 
     ## Default content-type.
-    if (!$res.has-header('location') && !$res.has-header('content-type')) {
+    if (!$res.has-header('content-type') && !$res.has-header('location')) {
       $res.content-type: 'text/html';
     }
 
