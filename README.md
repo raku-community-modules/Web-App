@@ -10,9 +10,17 @@ doesn't try to be everything under the sun.
 
 It consists of a few libraries, the most important of which are:
 
-  * WWW::Request   contains information about the HTTP request.
-  * WWW::Response  builds a PSGI compliant response.
-  * WWW::App       A minimal web framework, uses backend engines.
+  * WWW::Request   
+
+    Contains information about the HTTP request.
+
+  * WWW::Response  
+
+    Builds a PSGI compliant response.
+
+  * WWW::App       
+
+    A minimal web framework, uses backend engines.
 
 The first two libraries can be used by themselves if the full functionality
 of WWW::App is not required.
@@ -21,7 +29,7 @@ of WWW::App is not required.
 
 WWW::Request is similar to CGI.pm or Plack::Request from Perl 5.
 
-It supports standard CGI, SCGI, PSGI and mod-perl6.
+It supports PSGI (recommended), SCGI, FastCGI, mod-perl6 and standard CGI. 
 Currently only supports GET and non-multipart POST.
 I am planning on adding multi-part POST including file uploads,
 and some optional magic parameters similar to the ones in PHP.
@@ -37,23 +45,21 @@ redirect() to automatically create appropriate headers.
 Puts the above two together, along with a backend engine,
 and a context helper object, and makes building web apps really easy.
 
-Backend engines currently include SCGI and standalone HTTP modules.
+It supports any backend engine that provides a PSGI compliant interface,
+and a handle() method that takes a subroutine as a parameter (the subroutine
+must take a hash representing the environment), or an app() method that takes
+the aforementioned subroutine as a parameter, and a run() method to start
+processing requests.
+
 See the list below for details of which libraries to use.
 
-Other adapters could be made once libraries are available.
-The best example I could think of is FastCGI, which currently
-has no implementation on Perl 6.
+WWW::App also supports dispatching to different handlers based on rules.
 
-The engine object must either have a handle() method that takes
-an subroutine as its parameter (the subroutine must accept a hash that
-will contain the environment) or an app() method that takes
-the aforementioned subroutine as a parameter, and a run() method that
-then runs the handling.
-
-A new feature of WWW::App is dispatching based on rules.
 Rather than supporting a single handler, you can have multiple
 rules, which will perform specific actions, including running
-handlers, based on rules such as the URL path, host, or protocol.
+handlers, based on environment variables such as the URL path, host, or 
+protocol.
+
 Actions can include redirection, setting content-type, adding headers,
 or calling a handler (either a code block, or an object with a 
 handle() method.) A default handler can be called if no rules are matched.
@@ -65,14 +71,12 @@ such as a far more advanced redirect() method.
 ## Status
 
 Everything listed above works. For an even more complete Web Framework, see
-WWW::App::Easy, which builds upon WWW::App and adds an MVC framework on top of it.
+WWW::App::Easy, which is an MVC framework built upon WWW::App.
 
 ## Requirements
 
- * Rakudo Perl 6
-   http://rakudo.org/
  * MIME::Types
-   http://github.com/supernovus/perl6-mime-types
+   https://github.com/supernovus/perl6-mime-types
 
 ## Connector Engine Modules
 
@@ -80,19 +84,28 @@ WWW::App::Easy, which builds upon WWW::App and adds an MVC framework on top of i
 
     Offers the best integration with existing web servers, such as
     Apache, lighttpd, etc. It's like FastCGI, only simpler!
-    URL: http://github.com/supernovus/SCGI
+
+    URL: https://github.com/supernovus/SCGI
+
+  * FastCGI
+
+    More complex than SCGI, and supported by almost every web server.
+
+    URL: https://github.com/supernovus/perl6-fastcgi
 
   * HTTP::Easy
 
     WWW::App supports the HTTP::Easy::PSGI adapter, which provides a nice
     clean standalone HTTP server with PSGI application support.
     This provides GET and POST support including multipart/form-data.
+
     URL: http://github.com/supernovus/perl6-http-easy
 
   * HTTP::Server::Simple
 
     This library has not been tested, but WWW::App should be able to work with
     the HTTP::Server::Simple::PSGI interface without any modifications.
+
     URL: http://github.com/mberends/http-server-simple
 
 ## Note
@@ -116,7 +129,7 @@ that makes life a lot easier.
   use SCGI;
   use WWW::App;
 
-  my $scgi = SCGI.new(:port(8118), :PSGI); ## Make sure to set PSGI mode!
+  my $scgi = SCGI.new(:port(8118), :PSGI);
   my $app = WWW::App.new($scgi);
 
   my $handler = sub ($context) {

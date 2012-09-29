@@ -13,7 +13,7 @@ use SCGI;
 #use HTTP::Easy::PSGI;
 use WWW::App;
 
-my $scgi = SCGI.new(:port(8118), :PSGI, :!strict, :debug);
+my $scgi = SCGI.new(:port(8118), :PSGI); #:debug
 #my $http = HTTP::Easy::PSGI.new(:debug);
 my $app = WWW::App.new($scgi);
 

@@ -5,7 +5,7 @@ BEGIN { @*INC.push: './lib'; }
 use SCGI;
 use WWW::App;
 
-my $scgi = SCGI.new(:port(8118), :PSGI, :!strict, :debug);
+my $scgi = SCGI.new(:port(8118), :PSGI); #:debug
 my $app = WWW::App.new($scgi);
 
 my $handler = sub ($context) {

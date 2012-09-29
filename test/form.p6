@@ -7,7 +7,7 @@ use SCGI;
 use WWW::App;
 
 #my $http = HTTP::Easy::PSGI.new(:debug);
-my $scgi = SCGI.new(:port(8118), :PSGI, :!strict, :debug);
+my $scgi = SCGI.new(:port(8118), :PSGI); #:debug
 my $app = WWW::App.new($scgi);
 
 my $handler = sub ($context) {

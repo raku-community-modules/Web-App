@@ -23,7 +23,7 @@ use SCGI;
 use WWW::App;
 
 #my $psgi = HTTP::Easy::PSGI.new(:port(8080));
-my $scgi = SCGI.new(:port(8118), :PSGI, :debug);
+my $scgi = SCGI.new(:port(8118), :PSGI); #:debug
 my $app = WWW::App.new($scgi);
 
 my $main = sub ($context) {
