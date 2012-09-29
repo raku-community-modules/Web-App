@@ -47,17 +47,9 @@ method new(%env) {
   %new<remote-host> = %env<REMOTE_HOST> // %new<remote-address>;
   ## Now, if we're POST or PUT, let's get the body.
   if %new<method> eq 'POST' | 'PUT' {
-    if (%env<MODPERL6>) {
-      my $body;
-      my $r = Apache::Requestrec.new();
-      my $len = $r.read($body, %env<CONTENT_LENGTH>);
-      %new<body> = $body;
-    }
-    elsif %env<SCGI.Body> {
-      %new<body> = %env<SCGI.Body>; ## The SCGI library always returns a Str.
-    }
-    elsif %env<psgi.input> {
-      ## There is no standard for this, it can be a Str(ing), Array or IO object.
+    ## First try for PSGI-compliant input.
+    if %env<psgi.input> {
+      ## PSGI input can be a Str(ing), Array or IO object.
       my $input = %env<psgi.input>;
       if $input ~~ Str {
         %new<body> = $input;
@@ -69,8 +61,21 @@ method new(%env) {
         %new<body> = $input.slurp;
       }
     }
+    ## Fallbacks for non-PSGI connectors.
+    elsif (%env<MODPERL6>) {
+      my $body;
+      my $r = Apache::Requestrec.new();
+      my $len = $r.read($body, %env<CONTENT_LENGTH>);
+      %new<body> = $body;
+    }
+    elsif %env<scgi.request> {
+      %new<body> = %env<scgi.request>.input;
+    }
+    elsif %env<fastcgi.request> {
+      %new<body> = %env<fastcgi.request>.input;
+    }
+    ## Last resort fallback for standard CGI.
     else {
-      ## Standard CGI, suck in STDIN.
       %new<body> = $*IN.slurp;
     }
   }
