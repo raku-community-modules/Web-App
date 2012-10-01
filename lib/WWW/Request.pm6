@@ -6,6 +6,8 @@ use WWW::Request::File;      ## Uploaded files.
 ## Based on my old WebRequest class, which itself was based on the CGI.pm
 ## from the November project as well as Web::Request from the Web project.
 
+## TODO: Better handling of multipart encoding.
+
 has $.body;
 has $.type;
 has $.method;
@@ -49,9 +51,15 @@ method new(%env) {
   if %new<method> eq 'POST' | 'PUT' {
     ## First try for PSGI-compliant input.
     if %env<psgi.input> {
-      ## PSGI input can be a Str(ing), Array or IO object.
+      ## PSGI input can be a Buf, Str(ing), Array or IO object.
       my $input = %env<psgi.input>;
-      if $input ~~ Str {
+      if $input ~~ Buf && %new<type> eq 
+        'application/x-www-form-urlencoded' | 'multipart/form-data'
+      {
+        $input .= decode;
+      }
+
+      if $input ~~ Str | Buf {
         %new<body> = $input;
       }
       elsif $input ~~ Array {
