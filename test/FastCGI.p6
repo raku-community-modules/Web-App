@@ -2,11 +2,11 @@
 
 BEGIN { @*INC.push: './lib'; }
 
-use HTTP::Easy::PSGI;
+use FastCGI;
 use WWW::App;
 
-my $psgi = HTTP::Easy::PSGI.new(:port(8080));
-my $app = WWW::App.new($psgi);
+my $scgi = FastCGI.new(:port(9119));
+my $app = WWW::App.new($scgi);
 
 my $handler = sub ($context) {
   $context.set-status(200);

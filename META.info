@@ -2,6 +2,6 @@
   "name"        : "WWW::App",
   "version"     : "*",
   "description" : "Build web applications in Perl 6, easily.",
-  "depends"     : [ "SCGI", "HTTP::Easy", "MIME::Types" ],
+  "depends"     : [ "SCGI", "FastCGI", "HTTP::Easy", "MIME::Types" ],
   "source-url"    : "git://github.com/supernovus/perl6-www-app.git"
 }

@@ -43,9 +43,9 @@ method new(%env) {
   %new<uri> = %env<REQUEST_URI> // '';
   %new<path> = %env<PATH_INFO> // %new<uri>;
   %new<script-name> = %env<SCRIPT_NAME> // '';
-  %new<port> = +%env<SERVER_PORT> // 80;
+  %new<port> = %env<SERVER_PORT> ?? +%env<SERVER_PORT> !! 80;
   %new<proto> = %env<HTTPS> ?? 'https' !! 'http';
-  %new<content-length> = +%env<CONTENT_LENGTH> // 0;
+  %new<content-length> = %env<CONTENT_LENGTH> ?? +%env<CONTENT_LENGTH> !! 0;
   %new<remote-host> = %env<REMOTE_HOST> // %new<remote-address>;
   ## Now, if we're POST or PUT, let's get the body.
   if %new<method> eq 'POST' | 'PUT' {
