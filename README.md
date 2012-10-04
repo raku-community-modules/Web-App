@@ -83,13 +83,14 @@ WWW::App::Easy, which is an MVC framework built upon WWW::App.
   * SCGI
 
     Offers the best integration with existing web servers, such as
-    Apache, lighttpd, etc. It's like FastCGI, only simpler!
+    Apache, lighttpd, etc. It's like FastCGI, only simpler and faster.
 
     URL: https://github.com/supernovus/SCGI
 
   * FastCGI
 
-    More complex than SCGI, and supported by almost every web server.
+    A complex and comprehensive protocol, the Perl 6 implementation is
+    considerably slower than SCGI, but offers more advanced features.
 
     URL: https://github.com/supernovus/perl6-fastcgi
 
