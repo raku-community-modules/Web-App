@@ -22,6 +22,10 @@ It consists of a few libraries, the most important of which are:
 
     A minimal web framework, uses backend engines.
 
+  * WWW::App::Dispatch
+
+    An extension of WWW::App support advanced dispatch rules.
+
 The first two libraries can be used by themselves if the full functionality
 of WWW::App is not required.
 
@@ -53,61 +57,55 @@ processing requests.
 
 See the list below for details of which libraries to use.
 
-WWW::App also supports dispatching to different handlers based on rules.
+The context helper object provides wrappers to the Request and Response objects,
+including some magic functions that enable features otherwise not possible,
+such as a far more advanced redirect() method.
 
-Rather than supporting a single handler, you can have multiple
-rules, which will perform specific actions, including running
-handlers, based on environment variables such as the URL path, host, or 
-protocol.
+## WWW::App::Dispatch
+
+WWW::App::Dispatch is an extension of WWW::App, that  also supports advanced
+action dispatch based on rules.
+
+Rather than supporting a single handler, you can have multiple rules, 
+which will perform specific actions, including running handlers, 
+based on environment variables such as the URL path, host, or protocol.
 
 Actions can include redirection, setting content-type, adding headers,
 or calling a handler (either a code block, or an object with a 
 handle() method.) A default handler can be called if no rules are matched.
 
-The context helper object provides wrappers to the Request and Response objects,
-including some magic functions that enable features otherwise not possible,
-such as a far more advanced redirect() method.
-
 ## Status
 
 Everything listed above works. For an even more complete Web Framework, see
-WWW::App::Easy, which is an MVC framework built upon WWW::App.
+[WWW::App::Easy](https://github.com/supernovus/perl6-www-app-easy/), 
+which is an MVC framework built upon WWW::App::Dispatch.
 
 ## Requirements
 
- * MIME::Types
-   https://github.com/supernovus/perl6-mime-types
+ * [MIME::Types](https://github.com/supernovus/perl6-mime-types)
 
 ## Connector Engine Modules
 
-  * SCGI
+  * [SCGI](https://github.com/supernovus/SCGI)
 
     Offers the best integration with existing web servers, such as
     Apache, lighttpd, etc. It's like FastCGI, only simpler and faster.
 
-    URL: https://github.com/supernovus/SCGI
-
-  * FastCGI
+  * [FastCGI](https://github.com/supernovus/perl6-fastcgi)
 
     A complex and comprehensive protocol, the Perl 6 implementation is
     considerably slower than SCGI, but offers more advanced features.
 
-    URL: https://github.com/supernovus/perl6-fastcgi
-
-  * HTTP::Easy
+  * [HTTP::Easy](http://github.com/supernovus/perl6-http-easy)
 
     WWW::App supports the HTTP::Easy::PSGI adapter, which provides a nice
     clean standalone HTTP server with PSGI application support.
     This provides GET and POST support including multipart/form-data.
 
-    URL: http://github.com/supernovus/perl6-http-easy
-
-  * HTTP::Server::Simple
+  * [HTTP::Server::Simple](http://github.com/mberends/http-server-simple)
 
     This library has not been tested, but WWW::App should be able to work with
     the HTTP::Server::Simple::PSGI interface without any modifications.
-
-    URL: http://github.com/mberends/http-server-simple
 
 ## Note
 
@@ -130,7 +128,7 @@ that makes life a lot easier.
   use SCGI;
   use WWW::App;
 
-  my $scgi = SCGI.new(:port(8118), :PSGI);
+  my $scgi = SCGI.new(:port(8118));
   my $app = WWW::App.new($scgi);
 
   my $handler = sub ($context) {
@@ -152,10 +150,57 @@ that makes life a lot easier.
 
   $app.run: $handler;
 
-  ## End of script
+  ## End of script.
 ```
 
 ### Example 2
+
+This example is using WWW::App::Dispatch and some of its many rules.
+
+```perl
+
+  class RedirectHandler {
+    has $.site;
+    method handle ($context) {
+      $context.redirect($.site);
+    }
+  }
+
+  use SCGI;
+  use WWW::App::Dispatch;
+  
+  my $scgi = SCGI.new(:port(8118));
+  my $app  = WWW::App::Dispatch.new($scgi);
+
+  my $main = sub ($context) {
+    $context.set-status(200);
+    $context.content-type('text/plain');
+    my $name = $context.get(:default<World>, 'name');
+    $context.send("Hello $name");
+  }
+
+  $app.add(:handler($main), :default); ## Gets called if no other rules match.
+
+  ## Let's add an object-based handler on the '/test' URL path.
+  my $test = RedirectHandler.new(:site<http://huri.net>);
+  $app.add(:path</test>, :handler($test));
+
+  ## Another form of redirect, using an action rule.
+  $app.add(:proto<http>, :redirect<https>);
+
+  ## A slurp handler.
+  $app.add(:path</slurp>, :slurp<./webroot/hello.text>);
+
+  ## Send a file to the client browser.
+  $app.add(:path</file>, :sendfile<./webroot/data.zip>);
+
+  ## Okay, let's run the app.
+  $app.run;
+
+  ## End of script.
+```
+
+### Example 3
 
 This is an example of using WWW::Request and WWW::Response together with
 HTTP::Easy's PSGI adapter, without using WWW::App as a wrapper.
@@ -188,8 +233,8 @@ HTTP::Easy's PSGI adapter, without using WWW::App as a wrapper.
 
 ### Further Examples
 
-For more examples, including using other backends, and
-using dispatch rules, see the examples in the 'test' folder.
+For more examples, including using other backends, more dispatch
+rules, and lots of other cool stuff, see the examples in the 'test' folder.
 
 ## TODO
 

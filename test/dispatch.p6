@@ -11,11 +11,11 @@ class TestHandler {
 
 use SCGI;
 #use HTTP::Easy::PSGI;
-use WWW::App;
+use WWW::App::Dispatch;
 
 my $scgi = SCGI.new(:port(8118), :PSGI); #:debug
 #my $http = HTTP::Easy::PSGI.new(:debug);
-my $app = WWW::App.new($scgi);
+my $app = WWW::App::Dispatch.new($scgi);
 
 my $main = sub ($context) {
   $context.set-status(200);

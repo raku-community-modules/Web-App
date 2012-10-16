@@ -6,11 +6,10 @@ class WWW::App::Context;
 
 use WWW::Request;
 use WWW::Response;
-use MIME::Types;
 
-has $.req handles <get file path host>;             ## Contains the WWW::Request object.
-has $.res handles <set-status content-type send>;   ## Contains the WWW::Response object.
-has $.app handles <load-mime mime>;                 ## Contains the WWW::App object.
+has $.req handles <get file path host>;             ## WWW::Request
+has $.res handles <set-status content-type send>;   ## WWW::Response
+has $.app handles <load-mime mime>;                 ## WWW::App or subclass
 
 has $.rules is rw; ## Optional. Set to dispatch rules that sent us here.
 

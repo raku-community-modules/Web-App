@@ -18,13 +18,13 @@ class TestHandler is MethodHandler {
   }
 }
 
-#use HTTP::Easy::PSGI;
-use SCGI;
-use WWW::App;
+use HTTP::Easy::PSGI;
+#use SCGI;
+use WWW::App::Dispatch;
 
-#my $psgi = HTTP::Easy::PSGI.new(:port(8080));
-my $scgi = SCGI.new(:port(8118), :PSGI); #:debug
-my $app = WWW::App.new($scgi);
+my $http = HTTP::Easy::PSGI.new(:port(8080));
+#my $scgi = SCGI.new(:port(8118), :PSGI);
+my $app = WWW::App::Dispatch.new($http);
 
 my $main = sub ($context) {
   $context.set-status(200);
