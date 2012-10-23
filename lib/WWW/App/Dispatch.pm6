@@ -143,7 +143,7 @@ method !process-actions ($rules, $context) {
   if $rules.exists('handled') {
     $handled = $rules<handled>;
   }
-  return [ $handled, $last ];
+  return $handled, $last;
 }
 
 ## A version of run that dispatches based on rules.
@@ -179,7 +179,7 @@ multi method run () {
       ($handled, $last) = self!process-actions($rules, $context);
       if $last { last; }
     }
-    if !$handled && defined $default {
+    if ! $handled && $default.defined {
       my $last; ## Ignored here, as this IS the last.
       ($handled, $last) = self!process-actions($default, $context);
     }
