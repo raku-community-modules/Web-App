@@ -4,6 +4,8 @@ has $.status is rw;
 has @.headers;
 has @.body;
 
+has $.auto-length is rw = True; ## By default we calculate the length.
+
 method set-status (Int $status) {
   if ($status < 100 || $status > 599) { die "invalid HTTP status code."; }
   $.status = $status;
@@ -68,7 +70,13 @@ method send-file (Str $filename, :$file, :$content, :$type='application/octet-st
   self.send($contents);
 }
 
-method response {
+method response 
+{
+  if $.auto-length
+  {
+    my $len = @.body.join.encode.bytes;
+    self.insert-header('Content-Length' => $len);
+  }
   my $headers = @.headers;
   my $body    = @.body;
   return [ $.status, $headers, $body ];

@@ -62,4 +62,11 @@ method send-file ($filename, :$file, :$content, :$type, Bool :$cache) {
   $.res.send-file($filename, :$file, :$content, :$cache, :type($ctype));
 }
 
+## Use this if for some reason we don't want to add the Content-Length
+## header automatically when building our response.
+method no-length ()
+{
+  $.res.auto-length = False;
+}
+
 ## End of library.
