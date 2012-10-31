@@ -50,7 +50,7 @@ method new(%env) {
   ## Now, if we're POST or PUT, let's get the body.
   if %new<method> eq 'POST' | 'PUT' {
     ## First try for PSGI-compliant input.
-    if %env<psgi.input> {
+    if %env.exists('psgi.input') {
       ## PSGI input can be a Buf, Str(ing), Array or IO object.
       my $input = %env<psgi.input>;
       if $input ~~ Buf && %new<type> eq 
@@ -70,16 +70,16 @@ method new(%env) {
       }
     }
     ## Fallbacks for non-PSGI connectors.
-    elsif (%env<MODPERL6>) {
+    elsif %env.exists('MODPERL6') {
       my $body;
       my $r = Apache::Requestrec.new();
       my $len = $r.read($body, %env<CONTENT_LENGTH>);
       %new<body> = $body;
     }
-    elsif %env<scgi.request> {
+    elsif %env.exists('scgi.request') {
       %new<body> = %env<scgi.request>.input;
     }
-    elsif %env<fastcgi.request> {
+    elsif %env.exists('fastcgi.request') {
       %new<body> = %env<fastcgi.request>.input;
     }
     ## Last resort fallback for standard CGI.
