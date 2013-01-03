@@ -77,7 +77,7 @@ handle() method.) A default handler can be called if no rules are matched.
 ## Status
 
 Everything listed above works. For an even more complete Web Framework, see
-[WWW::App::Easy](https://github.com/supernovus/perl6-www-app-easy/), 
+[WWW::App::MVC](https://github.com/supernovus/perl6-www-app-mvc/), 
 which is an MVC framework built upon WWW::App::Dispatch.
 
 ## Requirements
@@ -85,6 +85,9 @@ which is an MVC framework built upon WWW::App::Dispatch.
  * [MIME::Types](https://github.com/supernovus/perl6-mime-types)
 
 ## Connector Engine Modules
+
+None of the connector modules are required by default, so you'll need to
+install them yourself whichever one you want to use via Panda.
 
   * [SCGI](https://github.com/supernovus/SCGI)
 
