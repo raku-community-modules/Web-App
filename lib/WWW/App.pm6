@@ -40,7 +40,12 @@ method mime  {
 multi method run (&app) {
   my $handler = sub (%env) {
     my $context = WWW::App::Context.new(%env, self);
-    app($context); ## Call our method. We don't care what it returns.
+    my $out = app($context); ## Call our routine.
+    ## If there is no response body, and the routine returned a string,
+    ## then we use the string as the response body.
+    if $context.res.body.elems == 0 && $out ~~ Str {
+      $context.send($out);
+    }
     if (!$context.res.status) { $context.res.set-status(200); }
     if (!$context.res.has-header('content-type') && !$context.res.has-header('location')) {
       $context.content-type: 'text/html';

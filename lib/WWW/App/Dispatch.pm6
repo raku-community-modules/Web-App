@@ -168,6 +168,7 @@ multi method run () {
         next; ## The default isn't filtered, nor run in the loop.
       }
       ## Next, let's find handlers to run, based on rules.
+      if $rules<method> && $req.method !~~ $rules<method> { next; }
       if $rules<path> && $req.path !~~ $rules<path> { next; }
       if $rules<host> && $req.host !~~ $rules<host> { next; }
       if $rules<proto> && $req.proto !~~ $rules<proto> { next; }
