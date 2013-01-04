@@ -74,11 +74,16 @@ Actions can include redirection, setting content-type, adding headers,
 or calling a handler (either a code block, or an object with a 
 handle() method.) A default handler can be called if no rules are matched.
 
-## Status
+## Related Projects and Extensions
 
-Everything listed above works. For an even more complete Web Framework, see
-[WWW::App::MVC](https://github.com/supernovus/perl6-www-app-mvc/), 
-which is an MVC framework built upon WWW::App::Dispatch.
+ * [WWW::App::MVC](https://github.com/supernovus/perl6-www-app-mvc/)
+
+   A MVC web framework built upon WWW::App::Dispatch.
+
+
+ * [WWW::App::Ballet](https://github.com/supernovus/perl6-www-app-ballet/)
+
+   A Dancer-like interface to WWW::App::Dispatch.
 
 ## Requirements
 
@@ -94,16 +99,19 @@ install them yourself whichever one you want to use via Panda.
     Offers the best integration with existing web servers, such as
     Apache, lighttpd, etc. It's like FastCGI, only simpler and faster.
 
+
   * [FastCGI](https://github.com/supernovus/perl6-fastcgi)
 
     A complex and comprehensive protocol, the Perl 6 implementation is
     considerably slower than SCGI, but offers more advanced features.
+
 
   * [HTTP::Easy](http://github.com/supernovus/perl6-http-easy)
 
     WWW::App supports the HTTP::Easy::PSGI adapter, which provides a nice
     clean standalone HTTP server with PSGI application support.
     This provides GET and POST support including multipart/form-data.
+
 
   * [HTTP::Server::Simple](http://github.com/mberends/http-server-simple)
 
