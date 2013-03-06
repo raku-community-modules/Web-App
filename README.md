@@ -1,50 +1,45 @@
-# WWW::App
+# Web -- A Web Application foundation for Perl 6
 
 ## Introduction
 
-WWW::App is a simple web application library for Perl 6, that uses
-the PSGI interface. It replaces my older WebRequest library, and is
-meant as a more generic framework to replace my ww6 framework (which
-is officially retired.) Like ww6, it is very flexible, unlike it, it
-doesn't try to be everything under the sun.
+Web is a simple web application library set for Perl 6, that uses
+the PSGI interface. It is based on work done for the original Web.pm project,
+as well as WebRequest, and November.
 
 It consists of a few libraries, the most important of which are:
 
-  * WWW::Request   
+  * Web::Request   
 
     Contains information about the HTTP request.
 
-  * WWW::Response  
+  * Web::Response  
 
     Builds a PSGI compliant response.
 
-  * WWW::App       
+  * Web::App       
 
-    A minimal web framework, uses backend engines.
+    A minimal web framework, uses backend engines (see below).
 
-  * WWW::App::Dispatch
+  * Web::App::Dispatch
 
-    An extension of WWW::App support advanced dispatch rules.
+    An extension of Web::App support advanced dispatch rules.
 
-The first two libraries can be used by themselves if the full functionality
-of WWW::App is not required.
+## Web::Request
 
-## WWW::Request
-
-WWW::Request is similar to CGI.pm or Plack::Request from Perl 5.
+Web::Request is similar to CGI.pm or Plack::Request from Perl 5.
 
 It supports PSGI (recommended), SCGI, FastCGI, mod-perl6 and standard CGI. 
 Currently only supports GET and non-multipart POST.
-I am planning on adding multi-part POST including file uploads,
+We are planning on adding multi-part POST including file uploads,
 and some optional magic parameters similar to the ones in PHP.
 
-## WWW::Response
+## Web::Response
 
 An easy to use object that builds a PSGI compliant response.
 Supports some quick methods such as content-type() and
 redirect() to automatically create appropriate headers.
 
-## WWW::App
+## Web::App
 
 Puts the above two together, along with a backend engine,
 and a context helper object, and makes building web apps really easy.
@@ -61,9 +56,9 @@ The context helper object provides wrappers to the Request and Response objects,
 including some magic functions that enable features otherwise not possible,
 such as a far more advanced redirect() method.
 
-## WWW::App::Dispatch
+## Web::App::Dispatch
 
-WWW::App::Dispatch is an extension of WWW::App, that  also supports advanced
+Web::App::Dispatch is an extension of Web::App, that  also supports advanced
 action dispatch based on rules.
 
 Rather than supporting a single handler, you can have multiple rules, 
@@ -76,14 +71,14 @@ handle() method.) A default handler can be called if no rules are matched.
 
 ## Related Projects and Extensions
 
- * [WWW::App::MVC](https://github.com/supernovus/perl6-www-app-mvc/)
+ * [Web::App::MVC](https://github.com/supernovus/perl6-web-app-mvc/)
 
-   A MVC web framework built upon WWW::App::Dispatch.
+   A MVC web framework built upon Web::App::Dispatch.
 
+ * [Web::App::Ballet](https://github.com/supernovus/perl6-web-app-ballet/)
 
- * [WWW::App::Ballet](https://github.com/supernovus/perl6-www-app-ballet/)
-
-   A Dancer-like interface to WWW::App::Dispatch.
+   A Dancer-like interface to Web::App::Dispatch. NOTE: This project will
+   be merged with [Bailador](https://github.com/tadzik/Bailador) in the near future.
 
 ## Requirements
 
@@ -99,48 +94,45 @@ install them yourself whichever one you want to use via Panda.
     Offers the best integration with existing web servers, such as
     Apache, lighttpd, etc. It's like FastCGI, only simpler and faster.
 
-
   * [FastCGI](https://github.com/supernovus/perl6-fastcgi)
 
     A complex and comprehensive protocol, the Perl 6 implementation is
     considerably slower than SCGI, but offers more advanced features.
 
-
   * [HTTP::Easy](http://github.com/supernovus/perl6-http-easy)
 
-    WWW::App supports the HTTP::Easy::PSGI adapter, which provides a nice
+    Web::App supports the HTTP::Easy::PSGI adapter, which provides a nice
     clean standalone HTTP server with PSGI application support.
     This provides GET and POST support including multipart/form-data.
 
-
   * [HTTP::Server::Simple](http://github.com/mberends/http-server-simple)
 
-    This library has not been tested, but WWW::App should be able to work with
+    This library has not been tested, but Web::App should be able to work with
     the HTTP::Server::Simple::PSGI interface without any modifications.
 
 ## Note
 
-You can use WWW::Request and WWW::Response with whatever backend
+You can use Web::Request and Web::Response with whatever backend
 you want, including regular CGI, but I don't recommend using CGI.
 It's horridly slow, and very evil. I recommend using one of the above
-libraries instead. Also, WWW::App is a nice wrapper, and requires at
+libraries instead. Also, Web::App is a nice wrapper, and requires at
 least one of the above optional modules to be used.
 
 ## Examples
 
 ### Example 1
 
-This is an example of the use of WWW::App and it's wrapper magic.
-Handlers for WWW::App are sent a special WWW::App::Context object
+This is an example of the use of Web::App and it's wrapper magic.
+Handlers for Web::App are sent a special Web::App::Context object
 which wraps the Request and Response, and provides some extra magic
 that makes life a lot easier.
 
 ```perl
   use SCGI;
-  use WWW::App;
+  use Web::App;
 
   my $scgi = SCGI.new(:port(8118));
-  my $app = WWW::App.new($scgi);
+  my $app = Web::App.new($scgi);
 
   my $handler = sub ($context) {
     given $context.path {
@@ -166,7 +158,7 @@ that makes life a lot easier.
 
 ### Example 2
 
-This example is using WWW::App::Dispatch and some of its many rules.
+This example is using Web::App::Dispatch and some of its many rules.
 
 ```perl
 
@@ -178,10 +170,10 @@ This example is using WWW::App::Dispatch and some of its many rules.
   }
 
   use SCGI;
-  use WWW::App::Dispatch;
+  use Web::App::Dispatch;
   
   my $scgi = SCGI.new(:port(8118));
-  my $app  = WWW::App::Dispatch.new($scgi);
+  my $app  = Web::App::Dispatch.new($scgi);
 
   my $main = sub ($context) {
     $context.set-status(200);
@@ -213,19 +205,19 @@ This example is using WWW::App::Dispatch and some of its many rules.
 
 ### Example 3
 
-This is an example of using WWW::Request and WWW::Response together with
-HTTP::Easy's PSGI adapter, without using WWW::App as a wrapper.
+This is an example of using Web::Request and Web::Response together with
+HTTP::Easy's PSGI adapter, without using Web::App as a wrapper.
 
 ```perl
   use HTTP::Easy::PSGI;
-  use WWW::Request;
-  use WWW::Response;
+  use Web::Request;
+  use Web::Response;
 
   my $http = HTTP::Easy::PSGI.new(); ## Default port is 8080.
 
   my $handler = sub (%env) {
-    my $req = WWW::Request.new(%env);
-    my $res = WWW::Response.new();
+    my $req = Web::Request.new(%env);
+    my $res = Web::Response.new();
     $res.set-status(200);
     $res.add-header('Content-Type' => 'text/plain');
     $res.send("Request parameters:");
@@ -250,13 +242,14 @@ rules, and lots of other cool stuff, see the examples in the 'test' folder.
 ## TODO
 
   * Fix binary uploads. They need to use Buf instead of Str.
-  * Add more pre-canned headers and automation to WWW::Response.
+  * Add more pre-canned headers and automation to Web::Response.
     Sending files back to the client should be made easy.
-  * Add more useful helpers to WWW::App::Context.
+  * Add more useful helpers to Web::App::Context.
 
-## Author
+## Authors
 
-Timothy Totten, supernovus on #perl6, https://github.com/supernovus/
+ * [Timothy Totten](https://github.com/supernovus/) -- supernovus on #perl6
+ * [Carl Mäsak](https://github.com/masak/) -- masak on #perl6
 
 ## License
 

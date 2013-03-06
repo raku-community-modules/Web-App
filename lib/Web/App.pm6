@@ -1,6 +1,6 @@
-class WWW::App;
+class Web::App;
 
-use WWW::App::Context;
+use Web::App::Context;
 
 has $.engine; ## The engine to handle requests.
 has $!mime;   ## MIME::Types object. Initialized on first use of mime().
@@ -18,6 +18,9 @@ method load-mime ($ufile) {
 ## Return the MIME::Types object.
 ## If it hasn't been created, we will try to
 ## find a default mime.types, otherwise, we will bail.
+##
+## TODO: Modify MIME::Types to use built-in mime.types file as default.
+##
 ## This is currently hard coded to the /etc/mime.types,
 ## which honestly, is pretty Linux/Unix specific.
 ## Please, for the love of whatever is sacred to you,
@@ -36,10 +39,10 @@ method mime  {
 ## The default version of run is for a single handler.
 ## It only supports raw code blocks, and no rules.
 ## If you need more functionality, look at
-## using the WWW::App::Dispatch subclass.
+## using the Web::App::Dispatch subclass.
 multi method run (&app) {
   my $handler = sub (%env) {
-    my $context = WWW::App::Context.new(%env, self);
+    my $context = Web::App::Context.new(%env, self);
     my $out = app($context); ## Call our routine.
     ## If there is no response body, and the routine returned a string,
     ## then we use the string as the response body.

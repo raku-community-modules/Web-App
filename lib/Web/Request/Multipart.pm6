@@ -1,8 +1,8 @@
 use v6;
 
-class WWW::Request::Multipart;
+class Web::Request::Multipart;
 
-use WWW::Request::File;
+use Web::Request::File;
 
 ## Represents a MIME multipart section we are parsing.
 
@@ -10,7 +10,7 @@ has $.boundary;                   ## Must be set during object creation.
 has @.parts;                      ## The actual parts we've found.
 has @!headers;                    ## Found headers. Files save these.
 has $.formid     is rw;           ## Set to the current form id.
-has $!file       is rw;           ## Set to a WWW::Request::File object.
+has $!file       is rw;           ## Set to a Web::Request::File object.
 has $!nest       is rw;           ## Used if we find a nested multipart.
 has $!value      is rw = '';      ## Set to the content if we are a form-field.
 has $!in-headers is rw = True;    ## True When parsing headers.
@@ -62,7 +62,7 @@ method parse-line (Stringy $line) {
   elsif $!in-headers && $line eq '' { ## A blank line ends headers.
     $!in-headers = False;
     if $!nest { 
-      my $nested = WWW::Request::Multipart.new(:boundary($!nest), :$.formid);
+      my $nested = Web::Request::Multipart.new(:boundary($!nest), :$.formid);
       return $nested; ## Send the nested Multipart back for processing.
     }
   }
@@ -75,7 +75,7 @@ method parse-line (Stringy $line) {
       }
       if $header.value[1].exists('filename') {
         ## Let's create a file object.
-        $!file = WWW::Request::File.new(
+        $!file = Web::Request::File.new(
           $.formid,                      ## The form name.
           $header.value[1]<filename>     ## the filename
         );

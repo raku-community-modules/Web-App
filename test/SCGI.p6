@@ -3,10 +3,10 @@
 BEGIN { @*INC.push: './lib'; }
 
 use SCGI;
-use WWW::App;
+use Web::App;
 
 my $scgi = SCGI.new(:port(8118), :PSGI); #:debug
-my $app = WWW::App.new($scgi);
+my $app = Web::App.new($scgi);
 
 my $handler = sub ($context) {
   $context.set-status(200);

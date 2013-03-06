@@ -3,10 +3,10 @@
 BEGIN { @*INC.push: './lib'; }
 
 use FastCGI;
-use WWW::App;
+use Web::App;
 
 my $scgi = FastCGI.new(:port(9119));
-my $app = WWW::App.new($scgi);
+my $app = Web::App.new($scgi);
 
 my $handler = sub ($context) {
   $context.set-status(200);

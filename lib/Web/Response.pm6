@@ -1,4 +1,4 @@
-class WWW::Response;
+class Web::Response;
 
 has $.status is rw;
 has @.headers;

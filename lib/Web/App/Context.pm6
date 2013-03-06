@@ -1,28 +1,28 @@
-class WWW::App::Context;
+class Web::App::Context;
 
-## This is a special object returned to WWW::App handlers, which contains
+## This is a special object returned to Web::App handlers, which contains
 ## a bunch of magic wrapper functions, to make life easier.
 ## It also contains the Request and Response objects.
 
-use WWW::Request;
-use WWW::Response;
+use Web::Request;
+use Web::Response;
 
-has $.req handles <get file path host>;             ## WWW::Request
-has $.res handles <set-status content-type send>;   ## WWW::Response
-has $.app handles <load-mime mime>;                 ## WWW::App or subclass
+has $.req handles <get file path host>;             ## Web::Request
+has $.res handles <set-status content-type send>;   ## Web::Response
+has $.app handles <load-mime mime>;                 ## Web::App or subclass
 
 has $.rules is rw; ## Optional. Set to dispatch rules that sent us here.
 
 method new (%env, $app) {
-  my $req = WWW::Request.new(%env);
-  my $res = WWW::Response.new();
+  my $req = Web::Request.new(%env);
+  my $res = Web::Response.new();
   self.bless(*, :$req, :$res, :$app);
 }
 
 ## Magic methods, extending the functionality possible in the
 ## standard Request/Response objects.
 
-## A magical version of redirect, based on ww6.
+## A magical version of redirect.
 method redirect (Stringy $url, $status=302) {
   if $url !~~ /^\w+'://'/ {
     my $proto = $.req.proto;

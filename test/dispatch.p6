@@ -11,11 +11,11 @@ class TestHandler {
 
 use SCGI;
 #use HTTP::Easy::PSGI;
-use WWW::App::Dispatch;
+use Web::App::Dispatch;
 
 my $scgi = SCGI.new(:port(8118), :PSGI); #:debug
 #my $http = HTTP::Easy::PSGI.new(:debug);
-my $app = WWW::App::Dispatch.new($scgi);
+my $app = Web::App::Dispatch.new($scgi);
 
 my $main = sub ($context) {
   $context.set-status(200);
@@ -32,7 +32,7 @@ $app.add(:handler($main), :default);
 my $test = TestHandler.new(:site<http://huri.net>);
 $app.add(:path</test>, :handler($test));
 
-## Another form of redirect, as supplied by WWW::App itself.
+## Another form of redirect, as supplied by Web::App itself.
 $app.add(:path</perl6>, :redirect<http://perl6.org/>);
 
 ## A slurp handler.

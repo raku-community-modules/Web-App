@@ -6,7 +6,7 @@ use v6;
 ## It's a weak example of implementing something kinda like
 ## my Lighter plugin from ww6, but no where near as complex or functional.
 ##
-## See the WWW::App::Easy::Controllers::MethodDispatch role for a better
+## See the Web::App::MVC::Controllers::MethodDispatch role for a better
 ## implementation of this concept.
 ##
 

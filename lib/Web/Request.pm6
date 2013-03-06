@@ -1,7 +1,7 @@
-class WWW::Request;
+class Web::Request;
 
-use WWW::Request::Multipart; ## Multipart context parsers.
-use WWW::Request::File;      ## Uploaded files.
+use Web::Request::Multipart; ## Multipart context parsers.
+use Web::Request::File;      ## Uploaded files.
 
 ## Based on my old WebRequest class, which itself was based on the CGI.pm
 ## from the November project as well as Web::Request from the Web project.
@@ -197,7 +197,7 @@ method add-param (Str $key, $value, Bool :$files) {
   }
 }
 
-method add-file (WWW::Request::File $file) {
+method add-file (Web::Request::File $file) {
   return self.add-param($file.formname, $file, :files);
 }
 
@@ -240,17 +240,17 @@ method file (Stringy $field, Bool :$multiple) {
 ## Parse multipart/form-data.
 method parse-multipart (Str $string, Str $boundary) {
   my @content = $string.split($CRLF);
-  my @context = WWW::Request::Multipart.new(:$boundary);
+  my @context = Web::Request::Multipart.new(:$boundary);
   for @content -> $line {
     if @context {
       my $context = @context[0];
       my $parse = $context.parse-line($line);
-      if $parse ~~ WWW::Request::Multipart {
+      if $parse ~~ Web::Request::Multipart {
         @context.unshift: $parse;
       }
       elsif $context.done {
         for $context.parts -> $part {
-          if $part ~~ WWW::Request::File {
+          if $part ~~ Web::Request::File {
             self.add-file($part);
           }
           elsif $part ~~ Pair {

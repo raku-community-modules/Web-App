@@ -1,8 +1,8 @@
-use WWW::App;
+use Web::App;
 
-class WWW::App::Dispatch is WWW::App;
+class Web::App::Dispatch is Web::App;
 
-use WWW::App::Context;
+use Web::App::Context;
 
 has @!rules;  ## Optional rules for the dispatch-based run();
 
@@ -149,11 +149,10 @@ method !process-actions ($rules, $context) {
 ## A version of run that dispatches based on rules.
 ## In addition to running handlers, it can also do
 ## magic like redirection, setting content-type, and
-## adding headers. It's based off of ww6 and its
-## Dispatch plugin.
+## adding headers.
 multi method run () {
   my $controller = sub (%env) {
-    my $context = WWW::App::Context.new(%env, self);
+    my $context = Web::App::Context.new(%env, self);
     my $req = $context.req; 
     my $res = $context.res;
     my $default; ## Used if no other rules match.

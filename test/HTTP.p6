@@ -3,10 +3,10 @@
 BEGIN { @*INC.push: './lib'; }
 
 use HTTP::Easy::PSGI;
-use WWW::App;
+use Web::App;
 
 my $psgi = HTTP::Easy::PSGI.new(:port(8080));
-my $app = WWW::App.new($psgi);
+my $app = Web::App.new($psgi);
 
 my $handler = sub ($context) {
   $context.set-status(200);

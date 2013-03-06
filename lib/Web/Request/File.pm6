@@ -1,4 +1,4 @@
-class WWW::Request::File;
+class Web::Request::File;
 
 ## Represents an uploaded file.
 
@@ -92,7 +92,7 @@ method slurp {
 ## By default returns the text value from the first matching header.
 ## If you want all matching headers, add the :multiple flag.
 ## If you want options in addition to the text value, add the :opts flag.
-## See WWW::Request::Multipart::parse-mime-header() for the storage format.
+## See Web::Request::Multipart::parse-mime-header() for the storage format.
 method header ($name, Bool :$multiple, Bool :$opts) {
   my @results;
   for @.headers -> $header {
@@ -144,6 +144,6 @@ method move (Stringy $destination) {
 }
 
 method perl {
-  return "WWW::Request::File<$.filename>";
+  return "Web::Request::File<$.filename>";
 }
 
