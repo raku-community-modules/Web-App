@@ -241,6 +241,7 @@ rules, and lots of other cool stuff, see the examples in the 'test' folder.
 
 ## TODO
 
+  * Finish testing framework, and write some tests.
   * Fix binary uploads. They need to use Buf instead of Str.
   * Add more pre-canned headers and automation to Web::Response.
     Sending files back to the client should be made easy.
