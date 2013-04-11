@@ -2,13 +2,13 @@
 
 BEGIN { @*INC.push: './lib'; }
 
-use SCGI;
-#use HTTP::Easy::PSGI;
+#use SCGI;
+use HTTP::Easy::PSGI;
 use Web::App;
 
-#my $http = HTTP::Easy::PSGI.new(:debug);
-my $scgi = SCGI.new(:port(8118), :PSGI); #:debug
-my $app = Web::App.new($scgi);
+my $http = HTTP::Easy::PSGI.new(:debug);
+#my $scgi = SCGI.new(:port(8118), :PSGI); #:debug
+my $app = Web::App.new($http);
 
 my $handler = sub ($context) {
   given $context.path {

@@ -175,6 +175,9 @@ multi method run () {
       ## Okay, if we've made it this far, we've passed all the rules so far.
       ## Now we can deal with actions, such as setting content-type, adding
       ## headers, redirecting. NOTE: Redirection ends all other processing.
+      if $rules<addpathmatch> {
+        $context.path-match = $req.path ~~ $rules<path>;
+      }
       my $last;
       ($handled, $last) = self!process-actions($rules, $context);
       if $last { last; }
