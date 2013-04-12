@@ -11,8 +11,6 @@ has $.req handles <get file path host>;             ## Web::Request
 has $.res handles <set-status content-type send>;   ## Web::Response
 has $.app handles <load-mime mime>;                 ## Web::App or subclass
 
-has $.path-match is rw;
-
 has $.rules is rw; ## Optional. Set to dispatch rules that sent us here.
 
 method new (%env, $app) {

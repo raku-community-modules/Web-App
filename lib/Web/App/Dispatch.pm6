@@ -172,12 +172,49 @@ multi method run () {
       if $rules<host> && $req.host !~~ $rules<host> { next; }
       if $rules<proto> && $req.proto !~~ $rules<proto> { next; }
       if $rules<notproto> && $req.proto ~~ $rules<notproto> { next; }
+
+      ## A more advanced filter than the basic path matcher.
+      ## This can match placeholder values, and add them to the request.
+      if $rules<matchpath> {
+        my %placeholders;
+        my @wantpath;
+        if $rules<matchpath> ~~ Array {
+          @wantpath = @$rules<matchpath>;
+        }
+        else {
+          my $wantpath = ~$rules<matchpath>;
+          $wantpath ~~ s/^\///;
+          $wantpath ~~ s/\/$//;
+          @wantpath = $wantpath.split('/');
+        }
+        my $path = $req.path;
+        $path ~~ s/^\///;
+        $path ~~ s/\/$//;
+        my @path = $path.split('/');
+        if @wantpath.elems > @path.elems { next; }
+        my $pos = 0;
+        my $failed = False;
+        for @wantpath -> $want {
+          if $want ~~ / ^ ':' / {
+            %placeholders{$want} = @path[$pos];
+          }
+          else {
+            if @path[$pos] !~~ $want {
+              $failed = True;
+              last;
+            }
+          }
+          $pos++;
+        }
+        if $failed { next; }
+        for %placeholders.kv -> $key, $value {
+          $req.add-param($key, $value);
+        }
+      }
+
       ## Okay, if we've made it this far, we've passed all the rules so far.
       ## Now we can deal with actions, such as setting content-type, adding
       ## headers, redirecting. NOTE: Redirection ends all other processing.
-      if $rules<addpathmatch> {
-        $context.path-match = $req.path ~~ $rules<path>;
-      }
       my $last;
       ($handled, $last) = self!process-actions($rules, $context);
       if $last { last; }
