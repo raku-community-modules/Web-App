@@ -3,5 +3,15 @@
   "version"     : "*",
   "description" : "A Web Application foundation for Perl 6",
   "depends"     : [ "MIME::Types" ],
+  "provides"    : {
+    "Web::App"                : "lib/Web/App.pm6",
+    "Web::App::Context"       : "lib/Web/App/Context.pm6",
+    "Web::App::Dispatch"      : "lib/Web/App/Dispatch.pm6",
+    "Web::App::Test"          : "lib/Web/App/Test.pm6",
+    "Web::Request"            : "lib/Web/Request.pm6",
+    "Web::Request::File"      : "lib/Web/Request/File.pm6",
+    "Web::Request::Multipart" : "lib/Web/Request/Multipart.pm6",
+    "Web::Response"           : "lib/Web/Response.pm6"
+  },
   "source-url"    : "git://github.com/supernovus/perl6-web.git"
 }
