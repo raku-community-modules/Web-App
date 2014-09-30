@@ -246,6 +246,8 @@ rules, and lots of other cool stuff, see the examples in the 'test' folder.
   * Add more pre-canned headers and automation to Web::Response.
     Sending files back to the client should be made easy.
   * Add more useful helpers to Web::App::Context.
+  * I'm planning on refactoring Web::App::Dispatch into a collection of
+    smaller components, with a more rubust routing system.
 
 ## Authors
 
