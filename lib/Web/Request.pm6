@@ -141,7 +141,7 @@ method eat-cookie(Str $http_cookie) {
 }
 
 sub unescape($string is copy) {
-  $string ~~ s:g/'+'/' '/;
+  $string ~~ s:g/'+'/ /;
   while $string ~~ / ( [ '%' <[0..9A..F]>**2 ]+ ) / {
     $string .= subst( $0.Str,
       percent_hack_start(decode_urlencoded_utf8($0.Str))
