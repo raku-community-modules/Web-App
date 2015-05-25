@@ -30,7 +30,7 @@ has %.files;   ## Indexed by the formid.
 constant $CRLF = "\x0D\x0A";
 
 method new(%env) {
-  my %new = { 'env' => %env };
+  my %new = %( 'env' => %env );
   ## First, find out if we have a query string.
   if defined %env<QUERY_STRING> { %new<query-string> = %env<QUERY_STRING>; }
   else { %new<query-string> = ''; }
@@ -50,7 +50,7 @@ method new(%env) {
   ## Now, if we're POST or PUT, let's get the body.
   if %new<method> eq 'POST' | 'PUT' {
     ## First try for PSGI-compliant input.
-    if %env.exists('psgi.input') {
+    if %env<psgi.input>:exists {
       ## PSGI input can be a Buf, Str(ing), Array or IO object.
       my $input = %env<psgi.input>;
       if $input ~~ Buf && %new<type> eq 
@@ -141,7 +141,7 @@ method eat-cookie(Str $http_cookie) {
 }
 
 sub unescape($string is copy) {
-  $string ~~ s:g/'+'/' '/;
+  $string ~~ s:g/'+'/ /;
   while $string ~~ / ( [ '%' <[0..9A..F]>**2 ]+ ) / {
     $string .= subst( $0.Str,
       percent_hack_start(decode_urlencoded_utf8($0.Str))
@@ -183,7 +183,7 @@ method add-param (Str $key, $value, Bool :$files) {
   my $params;
   if ($files) { $params = %.files; }
   else        { $params = %.params; }
-  if $params.exists($key) {
+  if $params{$key}:exists {
     if $params{$key} ~~ Array {
       $params{$key}.push($value);
     }
@@ -211,7 +211,7 @@ method param ($key) {
 ## value is returned. If you want all, specify the :multiple option.
 method get (Stringy :$default, Bool :$multiple, *@keys) {
   for @keys -> $key {
-    if %.params.exists($key.Str) {
+    if %.params{$key.Str}:exists {
       my $return = %.params{$key};
       if (! $multiple) && $return ~~ Array {
         return $return[0];
@@ -227,7 +227,7 @@ method get (Stringy :$default, Bool :$multiple, *@keys) {
 ## file found for the given upload field.
 ## Pass the :multiple option if you want multiples.
 method file (Stringy $field, Bool :$multiple) {
-  if %.files.exists($field) {
+  if %.files{$field}:exists {
     my $file = %.files{$field};
     if (! $multiple) && $file ~~ Array {
       return $file[0];
