@@ -1,4 +1,4 @@
-class Web::App::Context;
+unit class Web::App::Context;
 
 ## This is a special object returned to Web::App handlers, which contains
 ## a bunch of magic wrapper functions, to make life easier.

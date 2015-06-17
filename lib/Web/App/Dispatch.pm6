@@ -1,6 +1,6 @@
 use Web::App;
 
-class Web::App::Dispatch is Web::App;
+unit class Web::App::Dispatch is Web::App;
 
 use Web::App::Context;
 
