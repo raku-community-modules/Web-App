@@ -1,6 +1,6 @@
 use v6;
 
-class Web::Request::Multipart;
+unit class Web::Request::Multipart;
 
 use Web::Request::File;
 

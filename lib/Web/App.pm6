@@ -1,4 +1,4 @@
-class Web::App;
+unit class Web::App;
 
 use Web::App::Context;
 

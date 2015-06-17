@@ -1,4 +1,4 @@
-class Web::Request;
+unit class Web::Request;
 
 use Web::Request::Multipart; ## Multipart context parsers.
 use Web::Request::File;      ## Uploaded files.

@@ -1,4 +1,4 @@
-class Web::Response;
+unit class Web::Response;
 
 has $.status is rw;
 has @.headers;

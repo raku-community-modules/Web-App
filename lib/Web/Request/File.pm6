@@ -1,4 +1,4 @@
-class Web::Request::File;
+unit class Web::Request::File;
 
 ## Represents an uploaded file.
 
