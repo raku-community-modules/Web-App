@@ -10,10 +10,10 @@ has $.boundary;                   ## Must be set during object creation.
 has @.parts;                      ## The actual parts we've found.
 has @!headers;                    ## Found headers. Files save these.
 has $.formid     is rw;           ## Set to the current form id.
-has $!file       is rw;           ## Set to a Web::Request::File object.
-has $!nest       is rw;           ## Used if we find a nested multipart.
-has $!value      is rw = '';      ## Set to the content if we are a form-field.
-has $!in-headers is rw = True;    ## True When parsing headers.
+has $!file;                       ## Set to a Web::Request::File object.
+has $!nest;                       ## Used if we find a nested multipart.
+has $!value            = '';      ## Set to the content if we are a form-field.
+has $!in-headers       = True;    ## True When parsing headers.
 has $.done       is rw = False;   ## Set to true when parsing is complete.
 
 ## Take a MIME header and split it into value and options.
