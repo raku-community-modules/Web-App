@@ -1,10 +1,6 @@
 #!/usr/bin/env perl6
 
-BEGIN { 
-  @*INC.push: './lib'; 
-  @*INC.push: './test';
-}
-
+use lib <test lib>;
 use MethodHandler;
 
 class TestHandler is MethodHandler {

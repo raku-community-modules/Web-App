@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-BEGIN { @*INC.push: './lib'; }
+use lib 'lib';
 
 use FastCGI;
 use Web::App;
