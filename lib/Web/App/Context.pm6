@@ -23,7 +23,7 @@ method new (%env, $app) {
 ## standard Request/Response objects.
 
 ## A magical version of redirect.
-method redirect (Stringy $url, $status=302) {
+method redirect (Stringy $url is copy, $status=302) {
   if $url !~~ /^\w+'://'/ {
     my $proto = $.req.proto;
     my $relurl = ''; ## 
