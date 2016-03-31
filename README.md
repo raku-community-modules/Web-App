@@ -149,6 +149,7 @@ that makes life a lot easier.
         ## We don't support anything else, send them home.
         $context.redirect('/');
       }
+    }
   }
 
   $app.run: $handler;
