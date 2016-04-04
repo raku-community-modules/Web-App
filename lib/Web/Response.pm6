@@ -74,7 +74,10 @@ method response
 {
   if $.auto-length
   {
-    my $len = @.body.join.encode.bytes;
+    my $len = [+] @.body.map({
+      when Buf { .bytes }
+      default  { .encode.bytes }
+    });
     self.insert-header('Content-Length' => $len);
   }
   my $headers = @.headers;
