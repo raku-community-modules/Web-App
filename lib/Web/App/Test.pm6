@@ -29,7 +29,7 @@ class Web::App::Test {
     my ($path, $query) = $uri.split('?', 2);
     $query //= '';
 
-    my %env = {
+    my %env = (
       ## First standard HTTP variables.
       REQUEST_METHOD => $method,
       REQUEST_URI    => $uri,
@@ -47,7 +47,7 @@ class Web::App::Test {
       'psgi.run_once'     => False,
       'psgi.nonblocking'  => False,
       'psgi.streaming'    => False,
-    };
+    );
 
     if $!handler ~~ Callable {
       return $!handler(%env);
