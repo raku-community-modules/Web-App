@@ -33,7 +33,7 @@ class Web::App::Test {
     my ($path, $query) = $uri.split('?', 2);
     $query //= '';
 
-    my %env = {
+    my %env = (
       ## First standard HTTP variables.
       REQUEST_METHOD => $method,
       REQUEST_URI    => $uri,
@@ -41,7 +41,7 @@ class Web::App::Test {
       PATH_INFO      => $path,
       SERVER_NAME    => 'localhost',
       SERVER_PORT    => 80,
-    };
+    );
 
     populate-psgi-env(%env, :input($body), :errors($*ERR), 
       :p6sgi($.P6SGI), 

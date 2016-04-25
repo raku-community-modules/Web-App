@@ -53,7 +53,7 @@ method send-file ($filename, :$file, :$content, :$type, Bool :$cache) {
   my $ctype;
   if $type { $ctype = $type; }
   else {
-    my $ext = $filename.split('.').pop;
+    my $ext = $filename.split('.')[*-1] || '';
     $ctype = $.app.mime.type($ext);
     if (!$ctype) {
       $ctype = 'application/octet-stream';

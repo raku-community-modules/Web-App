@@ -1,6 +1,7 @@
 unit class Web::App;
 
 use Web::App::Context;
+use MIME::Types;
 
 has $.engine; ## The engine to handle requests.
 has $!mime;   ## MIME::Types object. Initialized on first use of mime().
