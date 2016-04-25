@@ -29,7 +29,60 @@ has %.files;   ## Indexed by the formid.
 
 constant $CRLF = "\x0D\x0A";
 
-method new(%env) {
+sub get-input-body ($input is copy, %opts)
+{
+  if $input ~~ Buf && %opts<type> eq 
+    'application/x-www-form-urlencoded' | 'multipart/form-data'
+  {
+    $input .= decode;
+  }
+
+  my $body = Nil;
+
+  if ($input ~~ Supply)
+  {
+    $input.tap(-> $segment {
+      if $segment ~~ Buf {
+        if $body ~~ Nil {
+          $body = $segment;
+        }
+        elsif $body ~~ Buf {
+          $body ~= $segment;
+        }
+        elsif $body ~~ Str {
+          $body ~= $segment.encode('UTF-8') ~ $segment;
+        }
+      }
+      else {
+        if $body ~~ Nil {
+          $body = $segment.Str;
+        }
+        elsif $body ~~ Buf {
+          $body ~= $segment.Str.encode('UTF-8');
+        }
+        else {
+          $body ~= $segment.Str;
+        }
+      }
+    });
+    $input.wait;
+  }
+  else
+  {
+    if $input ~~ Str | Buf {
+      $body = $input;
+    }
+    elsif $input ~~ Array {
+      $body = $input.join($CRLF); ## Join with CRLF.
+    }
+    elsif $input ~~ IO {
+      $body = $input.slurp;
+    }
+  }
+  return $body;
+}
+
+method new(%env, :$allow-cgi) {
   my %new = %( 'env' => %env );
   ## First, find out if we have a query string.
   if defined %env<QUERY_STRING> { %new<query-string> = %env<QUERY_STRING>; }
@@ -49,41 +102,34 @@ method new(%env) {
   %new<remote-host> = %env<REMOTE_HOST> // %new<remote-address>;
   ## Now, if we're POST or PUT, let's get the body.
   if %new<method> eq 'POST' | 'PUT' {
-    ## First try for PSGI-compliant input.
-    if %env<psgi.input>:exists {
-      ## PSGI input can be a Buf, Str(ing), Array or IO object.
-      my $input = %env<psgi.input>;
-      if $input ~~ Buf && %new<type> eq 
-        'application/x-www-form-urlencoded' | 'multipart/form-data'
-      {
-        $input .= decode;
-      }
-
-      if $input ~~ Str | Buf {
-        %new<body> = $input;
-      }
-      elsif $input ~~ Array {
-        %new<body> = $input.join($CRLF); ## Join with CRLF.
-      }
-      elsif $input ~~ IO {
-        %new<body> = $input.slurp;
-      }
+    ## First try for P6SGI/PSGI-compliant input.
+    if %env<p6w.input>:exists {
+      ## P6SGI 0.7Draft environment exists, use it.
+      %new<body> = get-input-body(%env<p6w.input>, %new);
+    }
+    elsif %env<p6sgi.input>:exists {
+      ## P6SGI 0.4Draft environment exists, use it.
+      %new<body> = get-input-body(%env<p6sgi.input>, %new);
+    }
+    elsif %env<psgi.input>:exists {
+      ## PSGI Classic environment exists, use it.
+      %new<body> = get-input-body(%env<psgi.input>, %new);
     }
     ## Fallbacks for non-PSGI connectors.
-    elsif %env.exists('MODPERL6') {
+    elsif %env<MODPERL6>:exists {
       my $body;
       my $r = Apache::Requestrec.new();
       my $len = $r.read($body, %env<CONTENT_LENGTH>);
       %new<body> = $body;
     }
-    elsif %env.exists('scgi.request') {
-      %new<body> = %env<scgi.request>.input;
+    elsif %env<scgi.request>:exists {
+      %new<body> = get-input-body(%env<scgi.request>.input, %new);
     }
-    elsif %env.exists('fastcgi.request') {
-      %new<body> = %env<fastcgi.request>.input;
+    elsif %env<fastcgi.request>:exists {
+      %new<body> = get-input-body(%env<fastcgi.request>.input, %new);
     }
-    ## Last resort fallback for standard CGI.
-    else {
+    ## Last resort fallback for standard CGI, please don't use this!
+    elsif ($allow-cgi) {
       %new<body> = $*IN.slurp;
     }
   }

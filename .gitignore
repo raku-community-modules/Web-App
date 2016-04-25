@@ -1,4 +1,4 @@
 Makefile
 blib
 *.pir
-*.swp
+lib/.precomp

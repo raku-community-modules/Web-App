@@ -14,7 +14,7 @@ has $.app handles <load-mime mime>;                 ## Web::App or subclass
 has $.rules is rw; ## Optional. Set to dispatch rules that sent us here.
 
 method new (%env, $app) {
-  my $req = Web::Request.new(%env);
+  my $req = Web::Request.new(%env, :allow-cgi($app.allow-cgi));
   my $res = Web::Response.new();
   self.bless(*, :$req, :$res, :$app);
 }

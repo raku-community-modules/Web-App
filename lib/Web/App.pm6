@@ -4,6 +4,7 @@ use Web::App::Context;
 
 has $.engine; ## The engine to handle requests.
 has $!mime;   ## MIME::Types object. Initialized on first use of mime().
+has $.allow-cgi = False; ## Don't use this, traditional CGI is evil.
 
 ## Create a new object, pass it an engine object.
 method new ($engine) {

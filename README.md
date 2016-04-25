@@ -83,6 +83,7 @@ handle() method.) A default handler can be called if no rules are matched.
 ## Requirements
 
  * [MIME::Types](https://github.com/supernovus/perl6-mime-types)
+ * [PSGI](https://github.com/supernovus/perl6-psgi)
 
 ## Connector Engine Modules
 

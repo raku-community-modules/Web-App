@@ -18,6 +18,10 @@
 
 class Web::App::Test {
 
+  use PSGI;
+
+  has $.PSGI  = False;
+  has $.P6SGI = True;
   has $.handler;
 
   method handle ($handler) {
@@ -37,17 +41,12 @@ class Web::App::Test {
       PATH_INFO      => $path,
       SERVER_NAME    => 'localhost',
       SERVER_PORT    => 80,
-      ## Now the PSGI variables.
-      'psgi.version'      => [1,0],
-      'psgi.url_schema'   => 'http',
-      'psgi.multithread'  => False,
-      'psgi.multiprocess' => False,
-      'psgi.input'        => $body,
-      'psgi.errors'       => $*ERR,
-      'psgi.run_once'     => False,
-      'psgi.nonblocking'  => False,
-      'psgi.streaming'    => False,
     };
+
+    populate-psgi-env(%env, :input($body), :errors($*ERR), 
+      :p6sgi($.P6SGI), 
+      :psgi-classic($.PSGI)
+    );
 
     if $!handler ~~ Callable {
       return $!handler(%env);
