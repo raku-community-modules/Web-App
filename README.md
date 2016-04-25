@@ -28,14 +28,15 @@ It consists of a few libraries, the most important of which are:
 
 Web::Request is similar to CGI.pm or Plack::Request from Perl 5.
 
-It supports PSGI (recommended), SCGI, FastCGI, mod-perl6 and standard CGI. 
+It supports P6SGI 0.7Draft (recommended), P6SGI 0.4Draft, PSGI Classic, SCGI standalone, FastCGI standalone, and mod-perl6.
+It can be forced to use standard CGI, but that's really not recommended.
 Currently only supports GET and non-multipart POST.
 We are planning on adding multi-part POST including file uploads,
 and some optional magic parameters similar to the ones in PHP.
 
 ## Web::Response
 
-An easy to use object that builds a PSGI compliant response.
+An easy to use object that builds a P6SGI/PSGI compliant response.
 Supports some quick methods such as content-type() and
 redirect() to automatically create appropriate headers.
 
@@ -44,7 +45,7 @@ redirect() to automatically create appropriate headers.
 Puts the above two together, along with a backend engine,
 and a context helper object, and makes building web apps really easy.
 
-It supports any backend engine that provides a PSGI compliant interface,
+It supports any backend engine that provides a P6SGI/PSGI compliant interface,
 and a handle() method that takes a subroutine as a parameter (the subroutine
 must take a hash representing the environment), or an app() method that takes
 the aforementioned subroutine as a parameter, and a run() method to start
@@ -88,7 +89,7 @@ handle() method.) A default handler can be called if no rules are matched.
 ## Connector Engine Modules
 
 None of the connector modules are required by default, so you'll need to
-install them yourself whichever one you want to use via Panda.
+install them yourself whichever one you want.
 
   * [SCGI](https://github.com/supernovus/SCGI)
 
@@ -110,14 +111,6 @@ install them yourself whichever one you want to use via Panda.
 
     This library has not been tested, but Web::App should be able to work with
     the HTTP::Server::Simple::PSGI interface without any modifications.
-
-## Note
-
-You can use Web::Request and Web::Response with whatever backend
-you want, including regular CGI, but I don't recommend using CGI.
-It's horridly slow, and very evil. I recommend using one of the above
-libraries instead. Also, Web::App is a nice wrapper, and requires at
-least one of the above optional modules to be used.
 
 ## Examples
 
