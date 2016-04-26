@@ -1,6 +1,6 @@
 {
   "name"        : "Web",
-  "version"     : "0.9.0",
+  "version"     : "0.9.1",
   "description" : "A Web Application foundation for Perl 6",
   "depends"     : [ "MIME::Types", "PSGI" ],
   "provides"    : {

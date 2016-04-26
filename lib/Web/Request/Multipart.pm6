@@ -70,10 +70,10 @@ method parse-line (Stringy $line) {
     my $header = self.parse-mime-header($line);
     @!headers.push: $header;
     if $header.key.lc eq 'content-disposition' {
-      if $header.value[1].exists('name') {
+      if $header.value[1]<name>:exists {
         $.formid = $header.value[1]<name>;
       }
-      if $header.value[1].exists('filename') {
+      if $header.value[1]<filename>:exists {
         ## Let's create a file object.
         $!file = Web::Request::File.new(
           $.formid,                      ## The form name.
@@ -83,7 +83,7 @@ method parse-line (Stringy $line) {
     }
     elsif $header.key.lc eq 'content-type' 
     && $header.value[0].lc ~~ /^ multipart/  ## :i not working?
-    && $header.value[1].exists('boundary') {
+    && $header.value[1]<boundary>:exists {
       $!nest = $header.value[1]<boundary>; ## Nested boundary.
     }
   }

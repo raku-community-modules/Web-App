@@ -74,14 +74,14 @@ method !process-actions ($rules, $context) {
       my $sendfile = $rules<sendfile>;
       $filename = $sendfile<filename>;
       ## Required stuff.
-      if $sendfile.exists('content') {
+      if $sendfile<content>:exists {
         $content = $sendfile<content>;
       }
-      elsif $sendfile.exists('file') {
+      elsif $sendfile<file>:exists {
         $file = $sendfile<file>;
       }
       ## Optional stuff.
-      if $sendfile.exists('type') {
+      if $sendfile<type>:exists {
         $type = $sendfile<type>;
       }
     }
@@ -122,7 +122,7 @@ method !process-actions ($rules, $context) {
   ## and $rules (for further optional processing.)
   ## The handler must return True if it handled the process, or False
   ## if it didn't.
-  if $rules.exists('handler') {
+  if $rules<handler>:exists {
     $context.rules = $rules;
     my $processed = self.process-handler($rules<handler>, $context);
     if $processed {
@@ -136,11 +136,11 @@ method !process-actions ($rules, $context) {
     $last = False;
   }
   ## Explicitly set the last setting.
-  elsif $rules.exists('last') {
+  elsif $rules<last>:exists {
     $last = $rules<last>;
   }
   ## Explicitly set the handled setting.
-  if $rules.exists('handled') {
+  if $rules<handled>:exists {
     $handled = $rules<handled>;
   }
   return $handled, $last;
