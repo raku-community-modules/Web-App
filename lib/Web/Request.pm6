@@ -196,9 +196,9 @@ sub unescape($string is copy) {
   return percent_hack_end($string);
 }
 
-sub percent_hack_start($str is rw) {
+sub percent_hack_start($str) {
   if $str ~~ '%' {
-    $str = '___PERCENT_HACK___';
+    return '___PERCENT_HACK___';
   }
   return $str;
 }
@@ -219,7 +219,7 @@ sub decode_urlencoded_utf8($str) {
       when { $^c +& 0xC0 == 0xC0 } { $bytes = 2; $mask = 0x1F; }
     }
     my @shift = (^$bytes).reverse.map({6 * $_});
-    my @mask  = $mask, 0x3f xx $bytes-1;
+    my @mask  = ($mask, 0x3f xx $bytes-1).flat;
     $r ~= chr( [+] @chars.splice(0, $bytes) »+&« @mask »+<« @shift );
   }
   return $r;
