@@ -1,4 +1,4 @@
-# Web -- A Web Application foundation for Perl 6
+# Web -- A Web Application foundation for Perl 6 [![Build Status](https://travis-ci.org/supernovus/perl6-web.svg?branch=master)](https://travis-ci.org/supernovus/perl6-web)
 
 ## Introduction
 
