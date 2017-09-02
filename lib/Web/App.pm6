@@ -9,7 +9,7 @@ has $.allow-cgi = False; ## Don't use this, traditional CGI is evil.
 
 ## Create a new object, pass it an engine object.
 method new ($engine) {
-  return self.bless(*, :$engine);
+  return self.bless(:$engine);
 }
 
 ## Load a mime file.
