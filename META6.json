@@ -3,7 +3,7 @@
   "name"        : "Web",
   "version"     : "0.9.2",
   "description" : "A Web Application foundation for Perl 6",
-  "depends"     : [ "MIME::Types", "PSGI", "SCGI" ],
+    "depends"     : [ "MIME::Types", "PSGI", "SCGI", "FastCGI", "HTTP::Easy::PSGI" ],
   "provides"    : {
     "Web::App"                : "lib/Web/App.pm6",
     "Web::App::Context"       : "lib/Web/App/Context.pm6",

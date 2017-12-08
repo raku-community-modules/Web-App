@@ -6,6 +6,6 @@ perl6:
 
 install:
     - rakudobrew build-zef
-    - zef update && zef install PSGI MIME::Types HTTP::Easy::PSGI FastCGI SCGI
+    - zef update && zef install --deps-only .
 script:
     - PERL6LIB=lib prove -v -r --ext p6 --exec=perl6 test/

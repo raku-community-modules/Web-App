@@ -234,6 +234,18 @@ HTTP::Easy's PSGI adapter, without using Web::App as a wrapper.
 For more examples, including using other backends, more dispatch
 rules, and lots of other cool stuff, see the examples in the 'test' folder.
 
+## Install
+
+Install directly from this repo using
+
+	zef install Web
+
+or download this repo and do
+
+	zef install --deps-only .
+
+if you want to try and contribute to it. 
+
 ## TODO
 
   * Finish testing framework, and write some tests.
