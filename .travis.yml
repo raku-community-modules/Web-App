@@ -1,11 +1,11 @@
-language: perl6
-
-perl6:
-    - latest
-    - 2016.01
+services:
+  - docker
 
 install:
-    - rakudobrew build-zef
-    - zef update && zef install PSGI MIME::Types HTTP::Easy::PSGI FastCGI SCGI
-script:
-    - PERL6LIB=lib prove -v -r --ext p6 --exec=perl6 test/
+  - docker pull jjmerelo/test-perl6
+  - docker images
+  - docker run -t --entrypoint="/bin/sh" jjmerelo/test-perl6 -c "perl6 --version; which zef "
+
+script: 
+  - docker run -t -v  $TRAVIS_BUILD_DIR:/test jjmerelo/test-perl6
+
