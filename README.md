@@ -1,8 +1,8 @@
-# Web -- A Web Application foundation for Perl 6 [![Build Status](https://travis-ci.org/supernovus/perl6-web.svg?branch=master)](https://travis-ci.org/supernovus/perl6-web)
+# Web -- A Web Application foundation for Raku [![Build Status](https://travis-ci.org/supernovus/perl6-web.svg?branch=master)](https://travis-ci.org/supernovus/perl6-web)
 
 ## Introduction
 
-Web is a simple web application library set for Perl 6, that uses
+Web is a simple web application library set for Raku, that uses
 the PSGI interface. It is based on work done for the original Web.pm project,
 as well as WebRequest, and November.
 
@@ -72,19 +72,19 @@ handle() method.) A default handler can be called if no rules are matched.
 
 ## Related Projects and Extensions
 
- * [Web::App::MVC](https://github.com/supernovus/perl6-web-app-mvc/)
+ * [Web::App::MVC](https://github.com/raku-community-modules/Web-App-MVC/)
 
    A MVC web framework built upon Web::App::Dispatch.
 
- * [Web::App::Ballet](https://github.com/supernovus/perl6-web-app-ballet/)
+ * [Web::App::Ballet](https://github.com/raku-community-modules/Web-App-Ballet/)
 
    A Dancer-like interface to Web::App::Dispatch. NOTE: This project will
    be merged with [Bailador](https://github.com/tadzik/Bailador) in the near future.
 
 ## Requirements
 
- * [MIME::Types](https://github.com/supernovus/perl6-mime-types)
- * [PSGI](https://github.com/supernovus/perl6-psgi)
+ * [MIME::Types](https://github.com/raku-community-modules/MIME-Types)
+ * [PSGI](https://github.com/raku-community-modules/PSGI)
 
 ## Connector Engine Modules
 
@@ -96,9 +96,9 @@ install them yourself whichever one you want.
     Offers the best integration with existing web servers, such as
     Apache, lighttpd, etc. It's like FastCGI, only simpler and faster.
 
-  * [FastCGI](https://github.com/supernovus/perl6-fastcgi)
+  * [FastCGI](https://github.com/raku-community-modules/FastCGI)
 
-    A complex and comprehensive protocol, the Perl 6 implementation is
+    A complex and comprehensive protocol, the Raku implementation is
     considerably slower than SCGI, but offers more advanced features.
 
   * [HTTP::Easy](http://github.com/supernovus/perl6-http-easy)
@@ -121,7 +121,7 @@ Handlers for Web::App are sent a special Web::App::Context object
 which wraps the Request and Response, and provides some extra magic
 that makes life a lot easier.
 
-```perl
+```raku
   use SCGI;
   use Web::App;
 
@@ -155,7 +155,7 @@ that makes life a lot easier.
 
 This example is using Web::App::Dispatch and some of its many rules.
 
-```perl
+```raku
 
   class RedirectHandler {
     has $.site;
@@ -203,7 +203,7 @@ This example is using Web::App::Dispatch and some of its many rules.
 This is an example of using Web::Request and Web::Response together with
 HTTP::Easy's PSGI adapter, without using Web::App as a wrapper.
 
-```perl
+```raku
   use HTTP::Easy::PSGI;
   use Web::Request;
   use Web::Response;
@@ -258,8 +258,8 @@ if you want to try and contribute to it.
 
 ## Authors
 
- * [Timothy Totten](https://github.com/supernovus/) -- supernovus on #perl6
- * [Carl Mäsak](https://github.com/masak/) -- masak on #perl6
+ * [Timothy Totten](https://github.com/supernovus/) -- supernovus on #raku
+ * [Carl Mäsak](https://github.com/masak/) -- masak on #raku
 
 ## License
 
