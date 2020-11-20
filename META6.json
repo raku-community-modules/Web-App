@@ -2,7 +2,7 @@
   "perl"        : "6.*",
   "name"        : "Web",
   "version"     : "0.9.2",
-  "description" : "A Web Application foundation for Perl 6",
+  "description" : "A Web Application foundation for Raku",
     "depends"     : [ "MIME::Types", "PSGI", "SCGI", "FastCGI", "HTTP::Easy::PSGI" ],
   "provides"    : {
     "Web::App"                : "lib/Web/App.pm6",
@@ -14,5 +14,5 @@
     "Web::Request::Multipart" : "lib/Web/Request/Multipart.pm6",
     "Web::Response"           : "lib/Web/Response.pm6"
   },
-  "source-url"    : "git://github.com/supernovus/perl6-web.git"
+  "source-url"    : "git://github.com/raku-community-modles/Web-App.git"
 }
