@@ -14,5 +14,5 @@
     "Web::Request::Multipart" : "lib/Web/Request/Multipart.pm6",
     "Web::Response"           : "lib/Web/Response.pm6"
   },
-  "source-url"    : "git://github.com/raku-community-modles/Web-App.git"
+  "source-url"    : "git://github.com/raku-community-modules/Web-App.git"
 }
