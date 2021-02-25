@@ -1,0 +1,25 @@
+name: Test Windows and MacOS
+
+on: [ push, pull_request ]
+
+jobs:
+  tests:
+    strategy:
+      matrix:
+        os:
+          - macOS-latest
+          - windows-latest
+        raku-version:
+          - 'latest'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: Raku/setup-raku@v1
+        with:
+          raku-version: ${{ matrix.raku-version }}
+      - name: Install Dependencies
+        run: zef install --deps-only .
+      - name: Install App::Prove6
+        run: zef install --/test App::Prove6
+      - name: Run Tests
+        run: zef test --verbose .
