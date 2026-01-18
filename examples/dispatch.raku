@@ -1,15 +1,11 @@
-#!/usr/bin/env perl6
-
-use lib 'lib';
-
 class TestHandler {
-  has $.site;
-  method handle ($context) {
-    $context.redirect($.site);
-  }
+    has $.site;
+    method handle($context) {
+       $context.redirect($.site);
+    }
 }
 
-use SCGI;
+use SCGI:ver<2.6+>:auth<zef:raku-community-modules>;
 #use HTTP::Easy::PSGI;
 use Web::App::Dispatch;
 
@@ -18,10 +14,10 @@ my $scgi = SCGI.new(:port(8118), :PSGI); #:debug
 my $app = Web::App::Dispatch.new($scgi);
 
 my $main = sub ($context) {
-  $context.set-status(200);
-  $context.content-type('text/plain');
-  my $name = $context.get(:default<World>, 'name');
-  $context.send("Hello $name");
+    $context.set-status(200);
+    $context.content-type('text/plain');
+    my $name = $context.get(:default<World>, 'name');
+    $context.send("Hello $name");
 }
 
 ## The :default only gets called if no other
@@ -46,3 +42,4 @@ $app.add(:path</sendfile>, :sendfile<./test/test-file.xml>);
 
 $app.run;
 
+# vim: expandtab shiftwidth=4

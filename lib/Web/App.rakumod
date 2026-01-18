@@ -76,4 +76,4 @@ method _dispatch ($handler) {
   }
 }
 
-## End of class.
+# vim: expandtab shiftwidth=4

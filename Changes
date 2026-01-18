@@ -1,0 +1,8 @@
+Revision history for Web::App
+
+{{$NEXT}}
+    - Refurbish the source and the documentation
+    - Add CI badge for each OS
+    - Add initial coverage testing
+    - Tighten dependencies
+    - Initial version as a fully supported Community module

@@ -1,4 +1,3 @@
-Makefile
-blib
-*.pir
-lib/.precomp
+.precomp/
+/Web-App-*
+*.rakucov

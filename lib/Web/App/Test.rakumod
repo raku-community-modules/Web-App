@@ -16,24 +16,24 @@
 ## PSGI requests to the application.
 ##
 
-class Web::App::Test {
+unit class Web::App::Test;
 
-  use PSGI;
+use PSGI:ver<1.2.3+>:auth<zef:raku-community-modules>;
 
-  has $.PSGI  = False;
-  has $.P6SGI = True;
-  has $.handler;
+has $.PSGI  = False;
+has $.P6SGI = True;
+has $.handler;
 
-  method handle ($handler) {
+method handle($handler) {
     $!handler = $handler;
-  }
+}
 
-  method request ($uri, :$method='GET', :$body) {
+method request($uri, :$method='GET', :$body) {
 
     my ($path, $query) = $uri.split('?', 2);
     $query //= '';
 
-    my %env = (
+    my %env =
       ## First standard HTTP variables.
       REQUEST_METHOD => $method,
       REQUEST_URI    => $uri,
@@ -41,22 +41,18 @@ class Web::App::Test {
       PATH_INFO      => $path,
       SERVER_NAME    => 'localhost',
       SERVER_PORT    => 80,
-    );
+    ;
 
     populate-psgi-env(%env, :input($body), :errors($*ERR), 
       :p6sgi($.P6SGI), 
       :psgi-classic($.PSGI)
     );
 
-    if $!handler ~~ Callable {
-      return $!handler(%env);
-    }
-    elsif $!handler.can('handle') {
-      return $!handler.handle(%env);
-    }
-    else {
-      return Nil;
-    }
-  }
-
+    $!handler ~~ Callable
+      ?? $!handler(%env)
+      !! $!handler.can('handle')
+        ?? $!handler.handle(%env)
+        !! Nil
 }
+
+# vim: expandtab shiftwidth=4
