@@ -10,10 +10,20 @@ SYNOPSIS
 
 ```raku
 use FastCGI;
+use Web::App;
 
-my $fcgi = FastCGI.new( :port(9119) );
+my $scgi = FastCGI.new(:port(9119));
+my $app  = Web::App.new($scgi);
 
-$fcgi.handle: &handler;
+my $handler = sub ($context) {
+    $context.set-status(200);
+    $context.content-type('text/plain');
+    my $name = $context.get(:default<World>, 'name');
+    $context.send("Hello $name\n");
+    $context.send("How are you today?\n");
+}
+
+$app.run: $handler;
 ```
 
 DESCRIPTION
