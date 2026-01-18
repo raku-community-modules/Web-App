@@ -4,6 +4,8 @@
     "Timothy Totten",
     "Raku Community"
   ],
+  "build-depends": [
+  ],
   "depends": {
     "runtime": {
       "requires": [
@@ -29,6 +31,9 @@
     "Web::Response": "lib/Web/Response.rakumod"
   },
   "raku": "6.d",
+  "resources": [
+  ],
+  "source-url": "https://github.com/raku-community-modules/Web-App.git",
   "support": {
     "bugtracker": "https://github.com/raku-community-modules/Web-App/issues",
     "email": "community@raku.org",
@@ -37,6 +42,8 @@
   "tags": [
     "WEB",
     "SERVER"
+  ],
+  "test-depends": [
   ],
   "version": "0.9.2"
 }
